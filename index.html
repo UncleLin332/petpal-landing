@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PetPal｜讓好習慣發生在現實世界，而不是手機裡</title>
+  <meta name="description" content="PetPal 是掌心大小的桌上型習慣養成電子寵物，透過 BLE 與 iOS App 雙向連動。離線優先、摸一下打卡、實體番茄鐘、久坐偵測，徹底告別手機分心陷阱。">
+  <meta property="og:title" content="PetPal｜桌上型實體電子寵物 × 習慣養成">
+  <meta property="og:description" content="讓好習慣發生在現實世界，而不是手機裡。離線優先、寧靜科技、iOS 雙向閉環。">
+  <meta property="og:image" content="assets/images/hero-main.jpg">
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eefaf6',
+              100: '#d7f4eb',
+              200: '#b2eadb',
+              300: '#7ddac4',
+              400: '#43c2a6',
+              500: '#14a888', // Exact iOS App FAB & Checkmark Jade Green
+              600: '#0f856c',
+              700: '#0f6b57',
+              800: '#105547',
+              900: '#10463b',
+              950: '#052923',
+            },
+            zen: {
+              bg: '#f2ede2',      // Exact iOS App Linen Oatmeal Background
+              surface: '#faf7f2', // Soft warm cream
+              card: '#ffffff',
+              pine: '#16302c',    // Exact iOS App Headline Text Dark Pine
+              body: '#3d524e',
+              muted: '#748884',
+              border: '#e2dbcd',
+              borderLight: '#ece6dc'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body class="bg-zen-bg text-zen-pine antialiased selection:bg-brand-500 selection:text-white">
+
+  <!-- =========================================================================
+       1. Navigation Bar (Zen Minimalist)
+       ========================================================================= -->
+  <header class="fixed top-0 left-0 right-0 z-50 glass-nav transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <!-- Brand Logo -->
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-600 to-brand-400 flex items-center justify-center text-white shadow-md shadow-brand-500/20 group-hover:scale-105 transition-transform duration-200">
+          <span class="text-xl">🐾</span>
+        </div>
+        <div class="flex flex-col">
+          <span class="font-extrabold text-xl tracking-tight text-zen-pine group-hover:text-brand-600 transition-colors">PetPal</span>
+          <span class="text-[10px] tracking-wider text-zen-muted font-medium uppercase">by Kappa Team</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Links -->
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-zen-body">
+        <a href="#philosophy" class="hover:text-brand-600 transition-colors">寧靜科技</a>
+        <a href="#features" class="hover:text-brand-600 transition-colors">六大情境</a>
+        <a href="#simulator" class="hover:text-brand-600 transition-colors flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
+          實機模擬
+        </a>
+        <a href="#specs" class="hover:text-brand-600 transition-colors">硬體規格</a>
+        <a href="#pricing" class="hover:text-brand-600 transition-colors">早鳥預購</a>
+        <a href="#faq" class="hover:text-brand-600 transition-colors">FAQ</a>
+      </nav>
+
+      <!-- CTA Button -->
+      <div class="hidden md:flex items-center gap-3">
+        <a href="#waitlist" class="px-5 py-2.5 rounded-full bg-brand-500 hover:bg-brand-600 text-white text-sm font-semibold transition-all duration-200 shadow-sm shadow-brand-500/25 hover:-translate-y-0.5">
+          搶先領取 68 折早鳥
+        </a>
+      </div>
+
+      <!-- Mobile Hamburger Button -->
+      <button id="mobile-menu-btn" class="md:hidden p-2 text-zen-body hover:text-zen-pine focus:outline-none" aria-label="打開導覽選單">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mobile Dropdown -->
+    <div id="mobile-menu" class="hidden md:hidden px-4 pt-2 pb-6 bg-zen-surface border-b border-zen-border shadow-xl">
+      <div class="flex flex-col gap-3 font-medium text-zen-body">
+        <a href="#philosophy" class="py-2 px-3 rounded-lg hover:bg-zen-bg hover:text-brand-600">寧靜科技理念</a>
+        <a href="#features" class="py-2 px-3 rounded-lg hover:bg-zen-bg hover:text-brand-600">六大核心情境</a>
+        <a href="#simulator" class="py-2 px-3 rounded-lg hover:bg-zen-bg hover:text-brand-600">實機雙向閉環模擬</a>
+        <a href="#specs" class="py-2 px-3 rounded-lg hover:bg-zen-bg hover:text-brand-600">硬體實機規格</a>
+        <a href="#pricing" class="py-2 px-3 rounded-lg hover:bg-zen-bg hover:text-brand-600">早鳥預購方案</a>
+        <a href="#faq" class="py-2 px-3 rounded-lg hover:bg-zen-bg hover:text-brand-600">常見問題</a>
+        <a href="#waitlist" class="mt-2 text-center py-3 rounded-xl bg-brand-500 text-white font-semibold shadow-md">
+          搶先領取 68 折早鳥
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="pt-24">
+    <!-- =========================================================================
+         2. Hero Section (Ultra-reliable High-Res Showcase)
+         ========================================================================= -->
+    <section class="relative overflow-hidden py-12 md:py-20 lg:py-24 bg-zen-pattern">
+      <!-- Ambient Glows -->
+      <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] bg-brand-100/60 rounded-full blur-3xl pointer-events-none -z-10"></div>
+      
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+          
+          <!-- Left Column: Copy & Waitlist Input -->
+          <div class="lg:col-span-6 flex flex-col items-start text-left">
+            <!-- Hackathon / Tech Proof Badge -->
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-brand-200 text-brand-700 text-xs sm:text-sm font-semibold shadow-sm mb-6">
+              <span class="flex h-2 w-2 relative">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-brand-500"></span>
+              </span>
+              <span>2026 臺科青創黑客松 · 實機雙向閉環驗收通過</span>
+            </div>
+
+            <!-- Main Headline -->
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-zen-pine leading-[1.15] mb-6">
+              讓好習慣發生在<br>
+              <span class="text-brand-600 underline decoration-brand-200 underline-offset-8">現實世界</span>，<br>
+              而不是手機裡。
+            </h1>
+
+            <!-- Subtitle -->
+            <p class="text-lg sm:text-xl text-zen-body font-normal leading-relaxed mb-8 max-w-xl">
+              掌心大小的桌上型習慣養成電子寵物 × 離線優先 × iOS 智慧連動。<br>
+              摸一下打卡、番茄鐘跑在裝置端、感測器確認離座才算休息。把手機收進抽屜，好習慣自然長成。
+            </p>
+
+            <!-- Hero Fast Waitlist Form -->
+            <form id="waitlist-form-hero" class="w-full max-w-md flex flex-col sm:flex-row gap-3 mb-6">
+              <input 
+                type="email" 
+                id="waitlist-email-hero" 
+                placeholder="輸入您的 Email 獲取早鳥 68 折優惠" 
+                required
+                class="flex-1 px-5 py-3.5 rounded-2xl bg-white border border-zen-border text-zen-pine placeholder:text-zen-muted focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-sm shadow-sm transition-all"
+              >
+              <button 
+                type="submit" 
+                class="px-6 py-3.5 rounded-2xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-sm shadow-lg shadow-brand-500/30 hover:shadow-brand-500/50 hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
+              >
+                搶先預約 VIP
+              </button>
+            </form>
+
+            <!-- Hero Trust Badges -->
+            <div class="flex flex-wrap items-center gap-6 text-xs text-zen-muted font-medium">
+              <div class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-brand-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                <span>真實實機運作中</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-brand-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                <span>核心功能永久免費</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-brand-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                <span>本地資料加密優先</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Pure High-Res Real Scene Showcase (Zero Loading Lag) -->
+          <div class="lg:col-span-6 flex flex-col items-center">
+            
+            <div class="w-full relative glass-card rounded-3xl p-4 sm:p-5 glow-subtle border border-zen-border overflow-hidden">
+              <div class="relative w-full rounded-2xl overflow-hidden shadow-lg border border-zen-border bg-white">
+                <img 
+                  src="assets/images/hero-main.jpg" 
+                  alt="PetPal 實體裝置與 iOS App 主視覺特寫" 
+                  class="w-full h-auto object-cover transform hover:scale-[1.02] transition-transform duration-500"
+                  fetchpriority="high"
+                >
+
+                <!-- Interactive Hotspot 1: Round LCD Screen -->
+                <div class="absolute top-[32%] left-[45%] group cursor-pointer">
+                  <span class="w-4 h-4 rounded-full bg-brand-500 pulse-dot flex items-center justify-center text-white text-[10px] font-bold"></span>
+                  <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-zen-pine text-white text-xs px-3 py-1.5 rounded-lg whitespace-nowrap shadow-xl">
+                    1.28 吋圓形全彩觸控螢幕
+                  </div>
+                </div>
+
+                <!-- Interactive Hotspot 2: Companion iOS App Sync -->
+                <div class="absolute bottom-[26%] right-[22%] group cursor-pointer">
+                  <span class="w-4 h-4 rounded-full bg-brand-500 pulse-dot flex items-center justify-center text-white text-[10px] font-bold"></span>
+                  <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-zen-pine text-white text-xs px-3 py-1.5 rounded-lg whitespace-nowrap shadow-xl">
+                    iOS BLE 雙向閉環同步
+                  </div>
+                </div>
+
+                <!-- Interactive Hotspot 3: Haptic & Touch -->
+                <div class="absolute top-[20%] left-[38%] group cursor-pointer">
+                  <span class="w-3.5 h-3.5 rounded-full bg-brand-500 pulse-dot flex items-center justify-center text-white text-[9px] font-bold"></span>
+                  <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-zen-pine text-white text-xs px-3 py-1.5 rounded-lg whitespace-nowrap shadow-xl">
+                    電容觸控感測 · 摸一下打卡
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bottom Feature Ribbon -->
+              <div class="mt-4 px-2 flex items-center justify-between text-xs text-zen-body">
+                <div class="flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-brand-500"></span>
+                  <span class="font-medium">實機原型組裝完成</span>
+                </div>
+                <div class="text-zen-muted font-mono">
+                  Waveshare ESP32-S3 · GC9A01
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         3. Problem & Reality Check (為什麼手機 App 總是失敗？)
+         ========================================================================= -->
+    <section id="problem" class="py-16 md:py-24 bg-zen-surface border-y border-zen-border">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="max-w-3xl mx-auto text-center mb-16">
+          <span class="text-xs font-bold tracking-widest text-brand-700 uppercase bg-brand-100 px-3.5 py-1.5 rounded-full border border-brand-200">
+            現實痛點剖析
+          </span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-zen-pine tracking-tight mt-4 mb-4">
+            「想養成好習慣，但工具本身就是最大干擾源」
+          </h2>
+          <p class="text-zen-body text-base sm:text-lg">
+            我們都試過用手機下載各種打卡、番茄鐘軟體，但往往陷入啼笑皆非的惡性循環：
+          </p>
+        </div>
+
+        <!-- 3-Column Pain Point Cards -->
+        <div class="grid md:grid-cols-3 gap-8">
+          
+          <div class="p-8 rounded-3xl bg-white border border-zen-border hover:border-brand-300 transition-all shadow-sm">
+            <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-2xl mb-6">
+              📱
+            </div>
+            <h3 class="text-xl font-bold text-zen-pine mb-3">打卡順手滑社群</h3>
+            <p class="text-zen-body text-sm leading-relaxed">
+              本來只是要打開 App 打卡「喝水」或「閱讀」，解鎖手機的瞬間，通知紅點與社群演算法立刻吞噬你的專注力，打完卡反而滑了半小時手機。
+            </p>
+          </div>
+
+          <div class="p-8 rounded-3xl bg-white border border-zen-border hover:border-brand-300 transition-all shadow-sm">
+            <div class="w-12 h-12 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center text-2xl mb-6">
+              ⏱️
+            </div>
+            <h3 class="text-xl font-bold text-zen-pine mb-3">五分鐘休息變三十分鐘</h3>
+            <p class="text-zen-body text-sm leading-relaxed">
+              番茄鐘在手機螢幕上響起，為了按「停止倒數」拿起手機，順便回了訊息、看了一支 Short，短暫休息直接失控成深度分心。
+            </p>
+          </div>
+
+          <div class="p-8 rounded-3xl bg-white border border-zen-border hover:border-brand-300 transition-all shadow-sm">
+            <div class="w-12 h-12 rounded-2xl bg-stone-100 text-stone-700 flex items-center justify-center text-2xl mb-6">
+              📉
+            </div>
+            <h3 class="text-xl font-bold text-zen-pine mb-3">百日放棄率高達 70%</h3>
+            <p class="text-zen-body text-sm leading-relaxed">
+              權威期刊 JMIR 2024 研究指出：純手機健康習慣類 App，超過 70% 用戶在 100 天內徹底棄用。純軟體缺乏「物理存在感」，終究敵不過惰性。
+            </p>
+          </div>
+
+        </div>
+
+        <!-- The Contrast / Punchline Banner -->
+        <div class="mt-12 p-8 rounded-3xl bg-zen-pine text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-2xl bg-brand-500/20 border border-brand-500/30 flex items-center justify-center text-3xl shrink-0">
+              💡
+            </div>
+            <div>
+              <h4 class="text-lg font-bold text-white">PetPal 的解法：物理隔離</h4>
+              <p class="text-stone-300 text-sm mt-1">把習慣互動搬回真實桌面，手機關靜音收進抽屜，用實體陪伴重構生活秩序。</p>
+            </div>
+          </div>
+          <a href="#simulator" class="px-6 py-3 rounded-xl bg-brand-500 hover:bg-brand-400 text-white font-bold text-sm whitespace-nowrap transition-all shadow-md">
+            體驗真實閉環
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         4. Calm Technology 寧靜科技哲學
+         ========================================================================= -->
+    <section id="philosophy" class="py-16 md:py-24 bg-zen-bg">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="max-w-3xl mx-auto text-center mb-16">
+          <span class="text-xs font-bold tracking-widest text-brand-700 uppercase bg-brand-100 px-3.5 py-1.5 rounded-full border border-brand-200">
+            產品核心哲學
+          </span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-zen-pine tracking-tight mt-4 mb-4">
+            源自 Xerox PARC 的「寧靜科技」（Calm Technology）
+          </h2>
+          <p class="text-zen-body text-base sm:text-lg">
+            科技應該放大人類的能力，而不是掠奪人類的注意力。
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+          
+          <!-- Pillar 1 -->
+          <div class="p-8 rounded-3xl bg-white border border-zen-border shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="text-brand-600 font-mono text-sm font-bold tracking-wider mb-2">01 / PRESENCE</div>
+              <h3 class="text-2xl font-bold text-zen-pine mb-3">周邊注意力存在</h3>
+              <p class="text-zen-body text-sm leading-relaxed mb-6">
+                平常安靜地待在桌角，偶爾眨眨眼、呼吸微光。不跳無聊推播，不需要你無時無刻低頭關注。它像真實寵物一樣在身旁陪伴，在你需要專注時絕不安擾。
+              </p>
+            </div>
+            <div class="pt-4 border-t border-zen-borderLight flex items-center text-xs text-brand-700 font-semibold">
+              <span>零干擾陪伴 · 守護心流狀態</span>
+            </div>
+          </div>
+
+          <!-- Pillar 2 -->
+          <div class="p-8 rounded-3xl bg-white border border-zen-border shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="text-brand-600 font-mono text-sm font-bold tracking-wider mb-2">02 / ZERO OVERHEAD</div>
+              <h3 class="text-2xl font-bold text-zen-pine mb-3">極致直覺的實體手勢</h3>
+              <p class="text-zen-body text-sm leading-relaxed mb-6">
+                摸一下裝置完成打卡；單鍵四段手勢（短按、雙擊、長按 1.5 秒、長按 5 秒）對應四個核心指令。外殼絕不多開多餘按鍵，用物理觸感取代繁瑣的螢幕點擊。
+              </p>
+            </div>
+            <div class="pt-4 border-t border-zen-borderLight flex items-center text-xs text-brand-700 font-semibold">
+              <span>盲操作打卡 · 觸覺微震確認</span>
+            </div>
+          </div>
+
+          <!-- Pillar 3 -->
+          <div class="p-8 rounded-3xl bg-white border border-zen-border shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="text-brand-600 font-mono text-sm font-bold tracking-wider mb-2">03 / OFFLINE FIRST</div>
+              <h3 class="text-2xl font-bold text-zen-pine mb-3">真正的「離線優先」</h3>
+              <p class="text-zen-body text-sm leading-relaxed mb-6">
+                番茄鐘倒數與寵物狀態機完全跑在 ESP32-S3 硬體端，手機只是遙控器。斷線期間硬體照常運作計時，重新靠近手機時自動無感回傳——純 App 競品完全做不到。
+              </p>
+            </div>
+            <div class="pt-4 border-t border-zen-borderLight flex items-center text-xs text-brand-700 font-semibold">
+              <span>手機放抽屜 · 斷線無縫續跑</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         5. Core Features Gallery (六大核心情境)
+         ========================================================================= -->
+    <section id="features" class="py-16 md:py-24 bg-zen-surface border-t border-zen-border">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="max-w-3xl mx-auto text-center mb-16">
+          <span class="text-xs font-bold tracking-widest text-brand-700 uppercase bg-brand-100 px-3.5 py-1.5 rounded-full border border-brand-200">
+            完整產品體驗
+          </span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-zen-pine tracking-tight mt-4 mb-4">
+            重新定義生活節奏的六大情境
+          </h2>
+          <p class="text-zen-body text-base sm:text-lg">
+            從個人專注、離座步態偵測，到數位靈魂演化與 StreetPass 近場社交。
+          </p>
+        </div>
+
+        <div class="space-y-16 lg:space-y-24">
+          
+          <!-- Feature 1: Drawer Check-in -->
+          <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            <div class="lg:col-span-6 order-2 lg:order-1">
+              <div class="inline-block px-3 py-1 rounded-full bg-brand-100 text-brand-800 text-xs font-bold mb-4">
+                情境 01 · 零分心打卡
+              </div>
+              <h3 class="text-2xl sm:text-3xl font-extrabold text-zen-pine mb-4">
+                手機收進抽屜也能打卡：<br>摸一下裝置完成習慣紀錄
+              </h3>
+              <p class="text-zen-body leading-relaxed text-base mb-6">
+                無論是晨間喝水、維他命補充還是閱讀打卡，手掌輕撫裝置頂部，電容感測器立即捕獲指令，並伴隨細緻的掌心微震。手機可以整天收在抽屜裡，你不再需要為了證明自己自律而碰觸手機。
+              </p>
+              <ul class="space-y-2.5 text-sm text-zen-body">
+                <li class="flex items-center gap-2.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-brand-500"></span>
+                  電容式高靈敏觸控，盲操作 0 延遲響應
+                </li>
+                <li class="flex items-center gap-2.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-brand-500"></span>
+                  分級線性微震（TICK），清晰反饋打卡成功
+                </li>
+              </ul>
+            </div>
+            <div class="lg:col-span-6 order-1 lg:order-2">
+              <div class="rounded-3xl overflow-hidden shadow-xl border border-zen-border group bg-white p-2">
+                <img 
+                  src="assets/images/feature-drawer.jpg" 
+                  alt="手機收進抽屜也能打卡：摸一下裝置完成習慣紀錄" 
+                  class="w-full h-auto object-cover rounded-2xl group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature 2: Hardware Pomodoro -->
+          <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            <div class="lg:col-span-6">
+              <div class="rounded-3xl overflow-hidden shadow-xl border border-zen-border group bg-white p-2">
+                <img 
+                  src="assets/images/feature-pomodoro.jpg" 
+                  alt="番茄鐘跑在裝置端：25分鐘專注進度環" 
+                  class="w-full h-auto object-cover rounded-2xl group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                >
+              </div>
+            </div>
+            <div class="lg:col-span-6">
+              <div class="inline-block px-3 py-1 rounded-full bg-sky-100 text-sky-800 text-xs font-bold mb-4">
+                情境 02 · 獨立專注時鐘
+              </div>
+              <h3 class="text-2xl sm:text-3xl font-extrabold text-zen-pine mb-4">
+                番茄鐘跑在硬體端：<br>25 分鐘專注進度環，視野一眼可見
+              </h3>
+              <p class="text-zen-body leading-relaxed text-base mb-6">
+                圓形螢幕外圍由發光進度環平滑倒數，餘光即可獲悉專注剩餘時間。倒數結束時以柔和震動與寵物表情提醒，讓你的專注完全沉浸在目前的桌面工作上。
+              </p>
+              <ul class="space-y-2.5 text-sm text-zen-body">
+                <li class="flex items-center gap-2.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-sky-600"></span>
+                  240×240 圓形 LCD 精緻進度環渲染
+                </li>
+                <li class="flex items-center gap-2.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-sky-600"></span>
+                  手機斷線照常計時，完成資料自動回填
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Feature 3: Real Sedentary & Walking (9/4 Breakthrough) -->
+          <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            <div class="lg:col-span-6 order-2 lg:order-1">
+              <div class="inline-block px-3 py-1 rounded-full bg-brand-100 text-brand-800 text-xs font-bold mb-4">
+                情境 03 · 9/4 實機驗收最新突破
+              </div>
+              <h3 class="text-2xl sm:text-3xl font-extrabold text-zen-pine mb-4">
+                物理久坐感測：<br>只有真正站起來走動，休息才算數
+              </h3>
+              <p class="text-zen-body leading-relaxed text-base mb-6">
+                以往久坐提醒跳在手機上，點個「稍後」就繼續坐著。PetPal 內建 6 軸 IMU 步態辨識演算法：連續靜坐 45 分鐘觸發提醒，<strong>手機端沒有任何按鈕可以敷衍關閉，必須拿起實體 PetPal 走動滿 5 步才能解除警報！走滿 15 步直接完成今日散步打卡！</strong>
+              </p>
+              <ul class="space-y-2.5 text-sm text-zen-body">
+                <li class="flex items-center gap-2.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-brand-500"></span>
+                  QMI8658 六軸感測器步頻動態濾波
+                </li>
+                <li class="flex items-center gap-2.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-brand-500"></span>
+                  累計 5 步撤卡、15 步散步達成雙向閉環
+                </li>
+              </ul>
+            </div>
+            <div class="lg:col-span-6 order-1 lg:order-2">
+              <div class="p-8 rounded-3xl bg-zen-pine text-white shadow-xl relative overflow-hidden border border-zen-border">
+                <div class="text-xs font-mono text-brand-300 mb-3">● HARDWARE WORKING PROTOCOL</div>
+                <h4 class="text-xl font-bold mb-4 text-white">軟硬體全鏈路雙向握手流程</h4>
+                <div class="space-y-3 font-mono text-xs text-stone-300">
+                  <div class="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
+                    <span>1. 靜坐滿 45 分鐘</span>
+                    <span class="text-amber-300">觸發久坐卡 (App)</span>
+                  </div>
+                  <div class="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
+                    <span>2. 手持走動累計 5 步</span>
+                    <span class="text-brand-300">TICK 微震 + 瞬間撤卡</span>
+                  </div>
+                  <div class="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
+                    <span>3. 繼續走滿 15 步</span>
+                    <span class="text-brand-400">CONFIRM 雙震 + 散步打勾</span>
+                  </div>
+                </div>
+                <div class="mt-6 flex items-center justify-between text-xs text-stone-400">
+                  <span>ESP32-S3 脫機行動電源獨立供電</span>
+                  <span class="text-brand-400 font-bold">100% 實機通過</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature 4: iOS App Sync & HealthKit -->
+          <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            <div class="lg:col-span-6">
+              <div class="rounded-3xl overflow-hidden shadow-xl border border-zen-border group bg-white p-2">
+                <img 
+                  src="assets/images/feature-ios-sync.jpg" 
+                  alt="iOS App 自動同步：習慣、健康數據與寵物成長" 
+                  class="w-full h-auto object-cover rounded-2xl group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                >
+              </div>
+            </div>
+            <div class="lg:col-span-6">
+              <div class="inline-block px-3 py-1 rounded-full bg-purple-100 text-purple-800 text-xs font-bold mb-4">
+                情境 04 · 現代 iOS 體驗
+              </div>
+              <h3 class="text-2xl sm:text-3xl font-extrabold text-zen-pine mb-4">
+                iOS App 自動同步：<br>習慣、健康數據與寵物成長一次看見
+              </h3>
+              <p class="text-zen-body leading-relaxed text-base mb-6">
+                原生 SwiftUI 打造的簡約 App。無縫對接 Apple HealthKit 同步每日步數與睡眠週期。寵物的體力與心情真實反映你的日常作息。嚴守本地加密原則，健康私隱絕不上傳至任何第三方伺服器。
+              </p>
+              <ul class="space-y-2.5 text-sm text-zen-body">
+                <li class="flex items-center gap-2.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-purple-600"></span>
+                  支援自訂習慣新增、Emoji 挑選與色彩標籤
+                </li>
+                <li class="flex items-center gap-2.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-purple-600"></span>
+                  無感背景同步，連線速度小於 100 毫秒
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Feature 5: Pet Evolution & Roster -->
+          <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            <div class="lg:col-span-6 order-2 lg:order-1">
+              <div class="inline-block px-3 py-1 rounded-full bg-rose-100 text-rose-800 text-xs font-bold mb-4">
+                情境 05 · 靈魂演化系統
+              </div>
+              <h3 class="text-2xl sm:text-3xl font-extrabold text-zen-pine mb-4">
+                九大風格寵物夥伴，<br>真實生活作息驅動數位染色體突變
+              </h3>
+              <p class="text-zen-body leading-relaxed text-base mb-6">
+                每個人的生活形態都不相同。從初生形態 Mochi 開始，如果你經常早起專注，將分支突變為「曦光守護者」；夜間心流型用戶將孕育出「賽博渡鴉」；戶外活躍型用戶則解鎖「深林樹熊」。甚至包含心流極客限定的隱藏彩蛋角色！
+              </p>
+              <ul class="space-y-2.5 text-sm text-zen-body">
+                <li class="flex items-center gap-2.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                  9 種不同像素表情與動態性格反應
+                </li>
+                <li class="flex items-center gap-2.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                  作息成就累積，解鎖稀有專屬外觀
+                </li>
+              </ul>
+            </div>
+            <div class="lg:col-span-6 order-1 lg:order-2">
+              <div class="rounded-3xl overflow-hidden shadow-xl border border-zen-border group bg-white p-2">
+                <img 
+                  src="assets/images/feature-evolution.jpg" 
+                  alt="靈魂演化與隱藏角色圖譜" 
+                  class="w-full h-auto object-cover rounded-2xl group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature 6: StreetPass Social -->
+          <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            <div class="lg:col-span-6">
+              <div class="rounded-3xl overflow-hidden shadow-xl border border-zen-border group bg-white p-2">
+                <img 
+                  src="assets/images/feature-streetpass.jpg" 
+                  alt="BLE近場擦身互動與雙人羈絆" 
+                  class="w-full h-auto object-cover rounded-2xl group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                >
+              </div>
+            </div>
+            <div class="lg:col-span-6">
+              <div class="inline-block px-3 py-1 rounded-full bg-teal-100 text-teal-800 text-xs font-bold mb-4">
+                情境 06 · 社交護城河
+              </div>
+              <h3 class="text-2xl sm:text-3xl font-extrabold text-zen-pine mb-4">
+                BLE 近場擦身互動：<br>重現街機溫度的雙人同伴羈絆
+              </h3>
+              <p class="text-zen-body leading-relaxed text-base mb-6">
+                在同一個自習室或辦公室，兩台 PetPal 裝置進入 1 公尺範圍內時，會透過 BLE 自動無感握手。螢幕邊緣亮起愛心牽絆光效，兩隻寵物互相揮手致意！與朋友一起結伴達成 21 天習慣養成，解鎖雙人專屬稱號與紀念勳章。
+              </p>
+              <ul class="space-y-2.5 text-sm text-zen-body">
+                <li class="flex items-center gap-2.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-teal-600"></span>
+                  向任天堂 3DS StreetPass 致敬的物理近場社交
+                </li>
+                <li class="flex items-center gap-2.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-teal-600"></span>
+                  零設定、無感配對，讓好習慣在朋友間互相激勵
+                </li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         6. Interactive Calm Tech Simulator (實機閉環互動模擬器 - Zen iOS Style)
+         ========================================================================= -->
+    <section id="simulator" class="py-16 md:py-24 bg-zen-bg border-t border-zen-border relative">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="max-w-3xl mx-auto text-center mb-12">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-100 text-brand-800 text-xs font-bold mb-4">
+            <span class="w-2 h-2 rounded-full bg-brand-500 animate-ping"></span>
+            9/4 實機驗收成果 · 線上體驗
+          </div>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-zen-pine tracking-tight mb-4">
+            親手體驗「寧靜科技」雙向閉環
+          </h2>
+          <p class="text-zen-body text-base sm:text-lg">
+            在下方點擊模擬按鈕，感受真實 ESP32-S3 掌心震動與 iPhone App 撤銷久坐、打勾習慣的即時聯動：
+          </p>
+        </div>
+
+        <!-- Simulator Container -->
+        <div class="max-w-4xl mx-auto glass-card rounded-3xl p-6 sm:p-10 border border-zen-border shadow-xl">
+          
+          <div class="grid md:grid-cols-12 gap-8 items-center">
+            
+            <!-- Left: Virtual PetPal Device -->
+            <div class="md:col-span-5 flex flex-col items-center justify-center p-6 rounded-2xl bg-zen-pine text-white relative shadow-md">
+              <div class="text-[10px] font-mono text-brand-200 tracking-widest uppercase mb-4">PetPal Hardware</div>
+              
+              <!-- Device Round Body -->
+              <div id="sim-device" class="w-44 h-44 rounded-full bg-[#1e3d37] border-4 border-[#284f47] shadow-2xl flex items-center justify-center relative transition-transform duration-150">
+                <!-- Inner Screen -->
+                <div class="w-36 h-36 rounded-full bg-black border-2 border-stone-700 flex flex-col items-center justify-center p-3 text-center select-none overflow-hidden relative">
+                  
+                  <!-- Circular Pomodoro Arc (SVG) in Zen Jade Green -->
+                  <svg class="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="46" stroke="#263b36" stroke-width="4" fill="none"/>
+                    <circle cx="50" cy="50" r="46" stroke="#14a888" stroke-width="4" fill="none" stroke-dasharray="289" stroke-dashoffset="75" stroke-linecap="round"/>
+                  </svg>
+
+                  <!-- Pet Face -->
+                  <div class="flex items-center gap-5 text-2xl font-bold text-amber-200 mt-2">
+                    <span id="sim-eye-l">•</span>
+                    <span id="sim-eye-r">•</span>
+                  </div>
+                  <div id="sim-mouth" class="text-sm text-amber-200 -mt-1 font-mono">‿</div>
+                  <div class="text-[10px] text-stone-400 font-mono mt-2">Mochi</div>
+                </div>
+
+                <!-- Touch Sensor Pin (top) -->
+                <div class="absolute -top-2 w-6 h-1.5 rounded-full bg-brand-500"></div>
+              </div>
+
+              <!-- Haptic Notification Floating Pill -->
+              <div id="sim-haptic-feedback" class="mt-4 px-3 py-1 rounded-full bg-[#122824] border border-[#284f47] text-xs text-brand-200 font-mono transition-opacity duration-300 opacity-0 flex items-center">
+                <span>⚡️ 觸覺回饋就緒</span>
+              </div>
+            </div>
+
+            <!-- Middle: BLE Connection Wave -->
+            <div class="md:col-span-2 flex flex-col items-center justify-center text-center">
+              <div class="w-10 h-10 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center text-lg mb-1 shadow-sm">
+                ⚡️
+              </div>
+              <span class="text-[11px] font-mono text-zen-body font-medium">BLE GATT</span>
+              <span class="text-[10px] text-brand-600 font-semibold">&lt; 100ms</span>
+            </div>
+
+            <!-- Right: Virtual iPhone Screen (Exact App Look & Feel) -->
+            <div class="md:col-span-5 flex flex-col p-5 rounded-3xl bg-[#f2ede2] border border-zen-border shadow-inner">
+              <div class="flex items-center justify-between pb-3 border-b border-zen-borderLight mb-3">
+                <span class="text-sm font-extrabold text-zen-pine">Habits</span>
+                <span class="text-[10px] px-2.5 py-0.5 rounded-full bg-white text-brand-700 font-medium border border-zen-border">iOS Companion</span>
+              </div>
+
+              <!-- Dynamic Sedentary Alert Card (Cleared by 5 steps) -->
+              <div id="sim-sedentary-card" class="p-3.5 rounded-2xl bg-amber-50/90 border border-amber-200/80 mb-3 transition-all duration-300 shadow-sm">
+                <div class="flex items-start gap-3">
+                  <span class="text-xl">⚠️</span>
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                      <h5 class="text-xs font-bold text-amber-900">Sedentary Alert</h5>
+                      <span class="text-[10px] text-amber-700 font-mono">47 mins</span>
+                    </div>
+                    <p class="text-[11px] text-amber-800 mt-0.5">已經坐很久囉！拿起 PetPal 走動走動。</p>
+                    <div class="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-200/80 text-amber-900 text-[10px] font-semibold">
+                      <span>🚶</span> Walk with your PetPal to clear
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Walking Cleared Confirmation Pill (Appears upon 5 steps) -->
+              <div id="sim-walking-capsule" class="hidden p-3 rounded-2xl bg-white border border-brand-200 text-brand-900 text-xs mb-3 transition-all duration-300 flex items-center gap-2.5 shadow-sm">
+                <span class="text-base">🎉</span>
+                <div>
+                  <span class="font-bold text-brand-800">Mochi felt you walking!</span>
+                  <span class="text-[11px] block text-brand-600">久坐警報已成功解除 · 5 steps</span>
+                </div>
+              </div>
+
+              <!-- Habits List (Matching User App Screenshot) -->
+              <div class="space-y-2.5 text-xs">
+                <!-- Habit 1: Drink Water -->
+                <div class="p-2.5 rounded-2xl bg-white border border-zen-borderLight flex items-center justify-between shadow-sm">
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-xl bg-sky-100 flex items-center justify-center text-sm">💧</div>
+                    <div>
+                      <div class="font-bold text-zen-pine line-through text-stone-400">Drink Water</div>
+                      <div class="text-[10px] text-stone-400">13 day streak</div>
+                    </div>
+                  </div>
+                  <div class="w-6 h-6 rounded-full bg-brand-500 text-white flex items-center justify-center text-xs font-bold">✓</div>
+                </div>
+
+                <!-- Habit 2: Take a Walk (Completed by 15 steps) -->
+                <div class="p-2.5 rounded-2xl bg-white border border-zen-borderLight flex items-center justify-between shadow-sm">
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center text-sm">🚶</div>
+                    <div>
+                      <div id="sim-walk-habit-text" class="font-bold text-zen-pine transition-all">Take a Walk</div>
+                      <div id="sim-streak-count" class="text-[10px] text-zen-muted font-mono">3 day streak</div>
+                    </div>
+                  </div>
+                  <div id="sim-walk-habit-check" class="w-6 h-6 rounded-full border-2 border-stone-200 bg-white flex items-center justify-center transition-all duration-300"></div>
+                </div>
+
+                <!-- Habit 3: Read 10 Pages (Completed by Touch) -->
+                <div class="p-2.5 rounded-2xl bg-white border border-zen-borderLight flex items-center justify-between shadow-sm">
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-xl bg-purple-100 flex items-center justify-center text-sm">📖</div>
+                    <div>
+                      <div id="sim-read-habit-text" class="font-bold text-zen-pine transition-all">Read 10 Pages</div>
+                      <div id="sim-read-streak-count" class="text-[10px] text-zen-muted font-mono">0 day streak</div>
+                    </div>
+                  </div>
+                  <div id="sim-read-habit-check" class="w-6 h-6 rounded-full border-2 border-stone-200 bg-white flex items-center justify-center transition-all duration-300"></div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Simulator Action Buttons in Zen Palette -->
+          <div class="mt-8 pt-6 border-t border-zen-border flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+            <button 
+              id="btn-sim-step5" 
+              class="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs sm:text-sm font-bold shadow-sm transition-all flex items-center gap-1.5"
+            >
+              <span>🚶</span> 走動 5 步 (解除久坐)
+            </button>
+            <button 
+              id="btn-sim-step15" 
+              class="px-5 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-xs sm:text-sm font-bold shadow-md shadow-brand-500/20 transition-all flex items-center gap-1.5"
+            >
+              <span>🏃</span> 走滿 15 步 (散步打卡)
+            </button>
+            <button 
+              id="btn-sim-touch" 
+              class="px-5 py-2.5 rounded-xl bg-zen-pine hover:bg-[#1f423d] text-white text-xs sm:text-sm font-bold shadow-sm transition-all flex items-center gap-1.5"
+            >
+              <span>🖐️</span> 摸一下打卡
+            </button>
+            <button 
+              id="btn-sim-reset" 
+              class="px-4 py-2.5 rounded-xl bg-white hover:bg-stone-50 border border-zen-border text-zen-body text-xs sm:text-sm font-semibold transition-all"
+            >
+              重置體驗
+            </button>
+          </div>
+
+          <p class="text-center text-[11px] text-zen-muted mt-4">
+            * 本互動模擬器直接映射 PetPal 於 2026/09/04 通過之實機雙向通訊協議（ESP32-S3 QMI8658 IMU ＋ iOS App State）。
+          </p>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         7. Hardware Specs & Trust Proof
+         ========================================================================= -->
+    <section id="specs" class="py-16 md:py-24 bg-zen-surface border-t border-zen-border">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="grid lg:grid-cols-12 gap-12 items-center">
+          
+          <!-- Specs Details -->
+          <div class="lg:col-span-6">
+            <span class="text-xs font-bold tracking-widest text-brand-700 uppercase bg-brand-100 px-3.5 py-1.5 rounded-full border border-brand-200">
+              硬體架構與規格
+            </span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-zen-pine tracking-tight mt-4 mb-4">
+              精悍硬體，無妥協的工業設計
+            </h2>
+            <p class="text-zen-body text-base mb-8">
+              我們不賣概念簡報。PetPal 原型已採用量產等級工業零組件完成組裝與韌體驗證：
+            </p>
+
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div class="p-4 rounded-2xl bg-white border border-zen-border shadow-sm">
+                <div class="text-xs text-zen-muted font-mono mb-1">MCU 主控晶片</div>
+                <div class="text-base font-bold text-zen-pine">ESP32-S3 雙核心</div>
+                <div class="text-xs text-zen-body mt-1">240MHz、支援 BLE 5.0 Mesh</div>
+              </div>
+
+              <div class="p-4 rounded-2xl bg-white border border-zen-border shadow-sm">
+                <div class="text-xs text-zen-muted font-mono mb-1">顯示螢幕</div>
+                <div class="text-base font-bold text-zen-pine">1.28 吋 GC9A01 LCD</div>
+                <div class="text-xs text-zen-body mt-1">240×240 高畫質全彩圓屏＋電容觸控</div>
+              </div>
+
+              <div class="p-4 rounded-2xl bg-white border border-zen-border shadow-sm">
+                <div class="text-xs text-zen-muted font-mono mb-1">動態感測器</div>
+                <div class="text-base font-bold text-zen-pine">QMI8658 6 軸 IMU</div>
+                <div class="text-xs text-zen-body mt-1">高精度加速度計＋陀螺儀步態辨識</div>
+              </div>
+
+              <div class="p-4 rounded-2xl bg-white border border-zen-border shadow-sm">
+                <div class="text-xs text-zen-muted font-mono mb-1">電源與通訊</div>
+                <div class="text-base font-bold text-zen-pine">Type-C 介面</div>
+                <div class="text-xs text-zen-body mt-1">支援行動電源獨立脫機供電</div>
+              </div>
+            </div>
+
+            <div class="mt-6 p-4 rounded-2xl bg-brand-50 border border-brand-200 flex items-center gap-3">
+              <span class="text-xl">🛡️</span>
+              <div class="text-xs text-brand-900">
+                <span class="font-bold">健康單位經濟驗證</span>：單台毛利率達 48%，590 台即達損益兩平。以早鳥預售現金流啟動量產，不舉債、不稀釋股權。
+              </div>
+            </div>
+          </div>
+
+          <!-- Specs Image Card -->
+          <div class="lg:col-span-6">
+            <div class="rounded-3xl overflow-hidden shadow-xl border border-zen-border bg-white p-3">
+              <img 
+                src="assets/images/device-ref.jpg" 
+                alt="PetPal 白色實體裝置設計基準圖" 
+                class="w-full h-auto object-cover rounded-2xl"
+                loading="lazy"
+              >
+              <div class="px-3 py-3 flex items-center justify-between text-xs text-zen-body">
+                <span>3D CAD 精準開模依據 (SolidWorks / Fusion)</span>
+                <span class="font-mono text-zen-pine font-bold">⌀ 45mm 掌心比例</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         8. Early Bird Pricing & Waitlist Section (Zen Forest Pine Theme)
+         ========================================================================= -->
+    <section id="pricing" class="py-16 md:py-24 bg-zen-pine text-white relative overflow-hidden">
+      <!-- Glow Decor -->
+      <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-brand-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        
+        <div class="max-w-3xl mx-auto text-center mb-16">
+          <span class="text-xs font-bold tracking-widest text-brand-300 uppercase bg-white/10 px-3.5 py-1.5 rounded-full border border-white/15">
+            預約早鳥專屬特權
+          </span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mt-4 mb-4">
+            用一次聚餐的費用，換一輩子的好習慣
+          </h2>
+          <p class="text-stone-300 text-base sm:text-lg">
+            立即登記電子信箱，鎖定首發限量 68 折保證預約名額，無需預付任何訂金。
+          </p>
+        </div>
+
+        <!-- Pricing Cards -->
+        <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-8 mb-16">
+          
+          <!-- Card 1: Early Bird VIP (Recommended) -->
+          <div class="p-8 sm:p-10 rounded-3xl bg-[#1c3832] border-2 border-brand-400 shadow-2xl relative flex flex-col justify-between">
+            <div class="absolute -top-4 right-8 px-4 py-1 rounded-full bg-brand-500 text-white text-xs font-extrabold shadow-lg">
+              🔥 限量早鳥 68 折
+            </div>
+
+            <div>
+              <div class="text-sm font-semibold text-brand-300 mb-1">早鳥募資 VIP</div>
+              <h3 class="text-2xl font-black text-white mb-4">PetPal 早期贊助者方案</h3>
+              
+              <div class="flex items-baseline gap-2 mb-6">
+                <span class="text-4xl sm:text-5xl font-extrabold text-white">NT$ 1,490</span>
+                <span class="text-stone-400 line-through text-lg">NT$ 2,200</span>
+              </div>
+
+              <ul class="space-y-3.5 text-sm text-stone-200 mb-8">
+                <li class="flex items-center gap-3">
+                  <span class="w-5 h-5 rounded-full bg-brand-500/20 text-brand-400 flex items-center justify-center text-xs">✓</span>
+                  PetPal 實體桌面陪伴裝置乙台
+                </li>
+                <li class="flex items-center gap-3">
+                  <span class="w-5 h-5 rounded-full bg-brand-500/20 text-brand-400 flex items-center justify-center text-xs">✓</span>
+                  專屬 Type-C 編織充電連接線
+                </li>
+                <li class="flex items-center gap-3">
+                  <span class="w-5 h-5 rounded-full bg-brand-500/20 text-brand-400 flex items-center justify-center text-xs">✓</span>
+                  iOS 配套 App 終生核心功能免費
+                </li>
+                <li class="flex items-center gap-3 font-bold text-amber-300">
+                  <span class="w-5 h-5 rounded-full bg-amber-400/20 text-amber-300 flex items-center justify-center text-xs">★</span>
+                  首波早鳥專屬：解鎖限定隱藏角色「曦光之靈」
+                </li>
+                <li class="flex items-center gap-3">
+                  <span class="w-5 h-5 rounded-full bg-brand-500/20 text-brand-400 flex items-center justify-center text-xs">✓</span>
+                  募資啟動後第 1 批優先排程出貨
+                </li>
+              </ul>
+            </div>
+
+            <a href="#waitlist" class="w-full py-4 rounded-2xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-center text-sm shadow-lg shadow-brand-500/30 transition-all">
+              立即鎖定 68 折名額
+            </a>
+          </div>
+
+          <!-- Card 2: Future Retail -->
+          <div class="p-8 sm:p-10 rounded-3xl bg-[#122824] border border-[#234941] flex flex-col justify-between">
+            <div>
+              <div class="text-sm font-semibold text-stone-400 mb-1">未來正式上市</div>
+              <h3 class="text-2xl font-black text-stone-200 mb-4">標準零售定價</h3>
+              
+              <div class="flex items-baseline gap-2 mb-6">
+                <span class="text-4xl sm:text-5xl font-extrabold text-stone-300">NT$ 2,200</span>
+              </div>
+
+              <ul class="space-y-3.5 text-sm text-stone-400 mb-8">
+                <li class="flex items-center gap-3">
+                  <span class="w-5 h-5 rounded-full bg-stone-700 text-stone-300 flex items-center justify-center text-xs">✓</span>
+                  PetPal 實體桌面陪伴裝置乙台
+                </li>
+                <li class="flex items-center gap-3">
+                  <span class="w-5 h-5 rounded-full bg-stone-700 text-stone-300 flex items-center justify-center text-xs">✓</span>
+                  標準 Type-C 充電線
+                </li>
+                <li class="flex items-center gap-3">
+                  <span class="w-5 h-5 rounded-full bg-stone-700 text-stone-300 flex items-center justify-center text-xs">✓</span>
+                  iOS 配套 App 終生核心功能免費
+                </li>
+                <li class="flex items-center gap-3 text-stone-500">
+                  <span class="w-5 h-5 rounded-full bg-stone-700 text-stone-500 flex items-center justify-center text-xs">✕</span>
+                  無早鳥限定角色
+                </li>
+              </ul>
+            </div>
+
+            <div class="w-full py-4 rounded-2xl bg-white/5 text-stone-500 font-medium text-center text-sm cursor-not-allowed">
+              正式量產後開放
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Dedicated Waitlist Anchor Box -->
+        <div id="waitlist" class="max-w-2xl mx-auto p-8 sm:p-10 rounded-3xl bg-[#1a3530] border border-[#264e45] text-center shadow-xl">
+          <h3 class="text-2xl font-black text-white mb-2">加入 Early Bird 早鳥通知名單</h3>
+          <p class="text-stone-300 text-sm mb-6">
+            募資正式上線前 48 小時，我們將寄發優先購買通道給名單中的 VIP，享有最低折扣保障。
+          </p>
+
+          <form id="waitlist-form" class="flex flex-col sm:flex-row gap-3">
+            <input 
+              type="email" 
+              id="waitlist-email" 
+              placeholder="請輸入您的 Email (例: andy@example.com)" 
+              required
+              class="flex-1 px-5 py-3.5 rounded-2xl bg-[#0e211e] border border-[#2b544b] text-white placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm"
+            >
+            <button 
+              type="submit" 
+              class="px-8 py-3.5 rounded-2xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-sm shadow-lg shadow-brand-500/30 transition-all whitespace-nowrap"
+            >
+              登記領取 VIP 序號
+            </button>
+          </form>
+          <p class="text-[11px] text-stone-400 mt-3">
+            🔒 我們重視您的隱私，絕不向第三方發送垃圾信件。
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         9. FAQ Section
+         ========================================================================= -->
+    <section id="faq" class="py-16 md:py-24 bg-zen-surface border-t border-zen-border">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="text-center mb-16">
+          <span class="text-xs font-bold tracking-widest text-brand-700 uppercase bg-brand-100 px-3.5 py-1.5 rounded-full border border-brand-200">
+            常見問題
+          </span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-zen-pine tracking-tight mt-4">
+            常見問答與解答
+          </h2>
+        </div>
+
+        <div class="space-y-4">
+          
+          <!-- Q1 -->
+          <div class="rounded-2xl bg-white border border-zen-border overflow-hidden shadow-sm">
+            <button class="faq-toggle w-full px-6 py-4 text-left flex items-center justify-between font-bold text-zen-pine text-base hover:text-brand-600 transition-colors">
+              <span>PetPal 需要隨時連接手機藍牙才能使用嗎？</span>
+              <svg class="faq-icon w-5 h-5 text-zen-muted transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div class="faq-content hidden px-6 pb-5 text-zen-body text-sm leading-relaxed border-t border-zen-borderLight pt-3">
+              完全不需要！這正是 PetPal「離線優先」的核心競爭力。番茄鐘倒數與寵物狀態機都獨立運行在硬體端，手機斷線時裝置照常打卡、計時。當你再次回到桌前打開手機時，BLE 會自動將所有紀錄無感回傳。
+            </div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="rounded-2xl bg-white border border-zen-border overflow-hidden shadow-sm">
+            <button class="faq-toggle w-full px-6 py-4 text-left flex items-center justify-between font-bold text-zen-pine text-base hover:text-brand-600 transition-colors">
+              <span>裝置的電力續航如何？需要一直插著線嗎？</span>
+              <svg class="faq-icon w-5 h-5 text-zen-muted transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div class="faq-content hidden px-6 pb-5 text-zen-body text-sm leading-relaxed border-t border-zen-borderLight pt-3">
+              在書桌情境下，可透過 Type-C 連接電腦或桌面充電座長效供電；外出散步時，可直接外接口袋型迷你行動電源，開機 1 秒內即刻連線並開始計步，兼顧輕巧與隨身移動性。
+            </div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="rounded-2xl bg-white border border-zen-border overflow-hidden shadow-sm">
+            <button class="faq-toggle w-full px-6 py-4 text-left flex items-center justify-between font-bold text-zen-pine text-base hover:text-brand-600 transition-colors">
+              <span>配套的 iOS App 會收取月費或年費訂閱嗎？</span>
+              <svg class="faq-icon w-5 h-5 text-zen-muted transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div class="faq-content hidden px-6 pb-5 text-zen-body text-sm leading-relaxed border-t border-zen-borderLight pt-3">
+              硬體買斷即享有「核心功能永久免費」！包含習慣追蹤、番茄鐘、HealthKit 步數睡眠同步與基礎夥伴演化皆不收月費。未來僅針對進階雲端備份、社群賽事或跨界聯名角色提供選用性訂閱。
+            </div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="rounded-2xl bg-white border border-zen-border overflow-hidden shadow-sm">
+            <button class="faq-toggle w-full px-6 py-4 text-left flex items-center justify-between font-bold text-zen-pine text-base hover:text-brand-600 transition-colors">
+              <span>我的個人習慣與健康數據會被上傳到伺服器嗎？</span>
+              <svg class="faq-icon w-5 h-5 text-zen-muted transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div class="faq-content hidden px-6 pb-5 text-zen-body text-sm leading-relaxed border-t border-zen-borderLight pt-3">
+              我們將「隱私優先（Privacy First）」作為硬體產品規格，而非口號。所有習慣打卡與健康資料皆儲存於 iPhone 本地與 Apple HealthKit 加密空間，我們絕不販售或分析任何用戶私人數據。
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- =========================================================================
+       10. Footer & Team Attribution (Zen Harmony)
+       ========================================================================= -->
+  <footer class="bg-zen-bg border-t border-zen-border py-12 text-zen-body text-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+        
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-xl bg-brand-500 text-white flex items-center justify-center font-bold">
+            🐾
+          </div>
+          <div>
+            <div class="font-extrabold text-zen-pine text-base">PetPal</div>
+            <div class="text-xs text-zen-muted">國立臺灣科技大學 × 國立臺灣大學 · 河童團 (Kappa Team)</div>
+          </div>
+        </div>
+
+        <div class="text-center md:text-right text-xs text-zen-muted">
+          <p>2026 第一屆臺科青創 · 創業黑客松 複選入圍團隊</p>
+          <p class="mt-1">© 2026 PetPal Project. All rights reserved. 讓好習慣發生在現實世界，而不是手機裡。</p>
+        </div>
+
+      </div>
+    </div>
+  </footer>
+
+  <!-- =========================================================================
+       11. VIP Waitlist Success Modal
+       ========================================================================= -->
+  <div id="vip-success-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl border border-zen-border text-center relative animate-float">
+      
+      <div class="w-16 h-16 rounded-full bg-brand-50 text-brand-600 text-3xl flex items-center justify-center mx-auto mb-4">
+        🎉
+      </div>
+
+      <h4 class="text-2xl font-black text-zen-pine mb-1">恭喜！早鳥名額已鎖定</h4>
+      <p class="text-zen-body text-xs mb-6">我們已將預約資訊綁定至您的信箱：<br><span id="modal-user-email" class="font-bold text-zen-pine"></span></p>
+
+      <!-- VIP Card (Zen Pine Theme) -->
+      <div class="p-6 rounded-2xl bg-[#16302c] text-white text-left shadow-lg mb-6 relative overflow-hidden">
+        <div class="flex justify-between items-center mb-6">
+          <span class="text-xs font-mono tracking-widest text-brand-300">PETPAL VIP ACCESS</span>
+          <span class="text-xs px-2.5 py-0.5 rounded-full bg-brand-500 text-white font-bold">68 折保證</span>
+        </div>
+        <div class="text-2xl font-mono font-black tracking-wider text-white mb-2" id="modal-vip-code">
+          VIP-PETPAL-0042
+        </div>
+        <div class="flex justify-between items-end text-[11px] text-stone-300">
+          <span>解鎖限定夥伴：曦光之靈</span>
+          <span>第一批優先出貨</span>
+        </div>
+      </div>
+
+      <button 
+        id="modal-close-btn" 
+        class="w-full py-3.5 rounded-2xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-sm transition-all shadow-md shadow-brand-500/20"
+      >
+        完成並返回網頁
+      </button>
+
+      <p class="text-[10px] text-zen-muted mt-4">
+        提示：募資上線時憑此 Email 信箱即可直接兌換專屬優惠連結。
+      </p>
+    </div>
+  </div>
+
+  <!-- Custom Scripts -->
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
