@@ -62,18 +62,3 @@ python3 -m http.server 8080
    - 輸入 Email 送出後自動觸發五彩紙屑慶祝（Canvas Confetti），頒發專屬早鳥序號卡（如：`VIP-PETPAL-0042`），並自動存入瀏覽器 `localStorage`。
    - **後台匯出名單捷徑**：在瀏覽器 F12 Console 輸入 `exportWaitlistCSV()` 即可一鍵下載收集到的名單 CSV。
 
----
-
-## 🌐 線上部署指南 (1 分鐘免費上線)
-
-因為本目錄是 100% 純靜態（Zero Dependencies），可直接發布：
-
-### 方案 A：GitHub Pages
-1. 將專案推送到 GitHub。
-2. 進入 Repo 的 `Settings` -> `Pages`。
-3. Source 選擇 `Deploy from a branch`，路徑指定 `/landing_page`（或將內容置於 `docs/` 或根目錄）。
-
-### 方案 B：Vercel / Cloudflare Pages / Netlify
-1. 直接在 Vercel 連結該 GitHub 倉庫。
-2. Root Directory 設定為 `landing_page`。
-3. 點擊 `Deploy`，即可獲得免費的 HTTPS 官方網站網址！
