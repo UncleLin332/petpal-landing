@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PetPal Soul Pass 靈魂演化通行證｜硬體買斷享完整陪伴，付費解鎖有溫度的靈魂</title>
+  <meta name="description" content="PetPal Soul Pass 靈魂通行證是專為渴望深度心靈陪伴打造的純年費雲端 AI 訂閱服務。賦予寵物動態個性演化、第一人稱生活日記、跨代族譜傳承、180天實體自律明信片與 Spotify Wrapped 式年度回顧。">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#E6F7F3',
+              100: '#C3EFE5',
+              200: '#9CE5D4',
+              300: '#6FD9C0',
+              400: '#3EC9A9',
+              500: '#14A888',
+              600: '#0E8269',
+              700: '#0A6B56',
+              800: '#075242',
+              900: '#04382D',
+            },
+            zen: {
+              bg: '#F4EFE6',
+              card: '#FFFFFF',
+              border: '#E2DBCD',
+              borderLight: '#EFEAE1',
+              pine: '#16302C',
+              pineLight: '#2A4D46',
+              body: '#2D423E',
+              muted: '#607B74',
+              gold: '#D97706',
+              goldLight: '#FEF3C7'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans TC', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #F4EFE6;
+      color: #2D423E;
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(12px);
+      border: 1px solid #E2DBCD;
+    }
+    .zen-tag {
+      background-color: #E6F7F3;
+      color: #0A6B56;
+      border: 1px solid rgba(20, 168, 136, 0.25);
+    }
+    .hero-glow {
+      background: radial-gradient(circle at 50% 30%, rgba(20, 168, 136, 0.14) 0%, rgba(244, 239, 230, 0) 70%);
+    }
+  </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+  <!-- Navigation Bar -->
+  <header class="sticky top-0 z-50 bg-[#F4EFE6]/90 backdrop-blur-md border-b border-zen-border">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2.5 text-zen-pine group">
+        <div class="w-9 h-9 rounded-full bg-brand-500 text-white flex items-center justify-center font-black shadow-sm group-hover:bg-brand-600 transition">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8 0-.46.04-.92.1-1.36.98 1.37 2.58 2.26 4.4 2.26 2.98 0 5.4-2.42 5.4-5.4 0-.81-.18-1.57-.5-2.26 3.99.72 7 4.19 7 8.36 0 4.41-3.59 8-8 8z"/></svg>
+        </div>
+        <div class="flex flex-col">
+          <span class="font-extrabold text-base tracking-tight text-zen-pine leading-none">PetPal</span>
+          <span class="text-[10px] font-bold text-brand-700 tracking-wider uppercase mt-0.5">Soul Pass 專頁</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <nav class="hidden md:flex items-center gap-7 text-xs font-semibold text-zen-body">
+        <a href="#philosophy" class="hover:text-brand-600 transition">核心哲學</a>
+        <a href="#diary" class="hover:text-brand-600 transition">第一人稱日記</a>
+        <a href="#postcard" class="hover:text-brand-600 transition">180天實體明信片</a>
+        <a href="#lineage" class="hover:text-brand-600 transition">跨代族譜</a>
+        <a href="#social" class="hover:text-brand-600 transition">相遇彩蛋</a>
+        <a href="#pricing" class="hover:text-brand-600 transition">年費方案</a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="text-xs font-semibold text-zen-muted hover:text-zen-pine transition px-3 py-1.5 rounded-lg border border-zen-border bg-white/60">
+          ← 返回首頁
+        </a>
+        <a href="#pricing" class="px-4 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs transition shadow-sm">
+          首年同捆限定版
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="relative pt-16 pb-20 hero-glow overflow-hidden">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full zen-tag text-xs font-semibold mb-6 shadow-sm">
+        <span class="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
+        純年費雲端 AI 訂閱 · NT$ 990 / 年（相當於每月 NT$ 82）
+      </div>
+
+      <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-zen-pine tracking-tight leading-tight mb-5">
+        硬體買斷享完整陪伴<br>
+        <span class="text-brand-600">付費解鎖有溫度的靈魂</span>
+      </h1>
+
+      <p class="text-base sm:text-xl text-zen-muted max-w-2xl mx-auto leading-relaxed mb-8">
+        讓實體桌面寵物跨越時間的洪流，擁有會思考、會寫日記、隨你的生活動態演化、代代傳承的真正數位生命。
+      </p>
+
+      <div class="flex flex-wrap items-center justify-center gap-4 text-xs font-medium text-zen-pine mb-10">
+        <span class="flex items-center gap-1.5 bg-white/80 border border-zen-border px-3 py-1.5 rounded-lg"><span class="text-brand-500 font-bold">●</span> 第一人稱成長日記</span>
+        <span class="flex items-center gap-1.5 bg-white/80 border border-zen-border px-3 py-1.5 rounded-lg"><span class="text-brand-500 font-bold">●</span> 180天實體紀念明信片</span>
+        <span class="flex items-center gap-1.5 bg-white/80 border border-zen-border px-3 py-1.5 rounded-lg"><span class="text-brand-500 font-bold">●</span> 跨代族譜與彩蛋孵化</span>
+        <span class="flex items-center gap-1.5 bg-white/80 border border-zen-border px-3 py-1.5 rounded-lg"><span class="text-brand-500 font-bold">●</span> Spotify Wrapped 式年度回顧</span>
+      </div>
+
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3.5">
+        <a href="#pricing" class="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-brand-500 hover:bg-brand-600 text-white font-extrabold text-sm transition shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
+          預購「首年同捆典藏版」現省 NT$ 400 ➔
+        </a>
+        <a href="#diary" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl glass-card text-zen-pine font-bold text-sm hover:bg-white transition border border-zen-border">
+          閱讀寵物第 20 週真實日記
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 1: Philosophy (核心邊界) -->
+  <section id="philosophy" class="py-16 border-t border-zen-border bg-white/50">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6">
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <span class="text-xs font-bold text-brand-600 tracking-wider uppercase">Product Boundary</span>
+        <h2 class="text-2xl sm:text-3xl font-black text-zen-pine mt-1">免費版 vs Soul Pass：我們對邊界的堅持</h2>
+        <p class="text-xs sm:text-sm text-zen-muted mt-2">
+          「我們堅決反對靠閹割硬體來逼課。買硬體的用戶享有完整且活著的寵物，付費是為了追求更高維度的心靈共鳴。」
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Left: Free Edition -->
+        <div class="glass-card rounded-3xl p-7 border border-zen-border flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-base font-bold text-zen-pine flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-zen-muted"></span> 免費版（隨硬體終身享有）
+              </span>
+              <span class="text-xs px-2.5 py-0.5 rounded-full bg-stone-100 text-zen-muted font-bold">NT$ 0 買斷</span>
+            </div>
+            <ul class="space-y-3 text-xs sm:text-sm text-zen-body">
+              <li class="flex items-start gap-2.5"><span class="text-brand-500 font-bold">✓</span> <span><strong>零懲罰機制</strong>：寵物永遠不會餓死，無每日上線焦慮。</span></li>
+              <li class="flex items-start gap-2.5"><span class="text-brand-500 font-bold">✓</span> <span><strong>完整成長線</strong>：幼年→成年，靠習慣里程碑推進解鎖外觀。</span></li>
+              <li class="flex items-start gap-2.5"><span class="text-brand-500 font-bold">✓</span> <span><strong>本機原型個性</strong>：配對時由序號決定初始性格，離線安全加密。</span></li>
+              <li class="flex items-start gap-2.5"><span class="text-brand-500 font-bold">✓</span> <span><strong>BLE 碰碰社交</strong>：硬體近場擦身相遇動畫，解鎖 9 隻經典角色。</span></li>
+            </ul>
+          </div>
+          <div class="mt-6 pt-4 border-t border-zen-borderLight text-xs text-zen-muted italic">
+            承諾：不花一毛錢訂閱，也能擁有一隻完整的實體生活伴侶。
+          </div>
+        </div>
+
+        <!-- Right: Soul Pass -->
+        <div class="glass-card rounded-3xl p-7 border-2 border-brand-500 shadow-lg relative flex flex-col justify-between">
+          <div class="absolute -top-3 right-6 px-3 py-0.5 rounded-full bg-brand-500 text-white text-[11px] font-extrabold shadow-sm">
+            RECOMMENDED
+          </div>
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-base font-bold text-zen-pine flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-brand-500"></span> Soul Pass（純年費訂閱）
+              </span>
+              <span class="text-xs px-2.5 py-0.5 rounded-full zen-tag font-bold">NT$ 990 / 年</span>
+            </div>
+            <ul class="space-y-3 text-xs sm:text-sm text-zen-body">
+              <li class="flex items-start gap-2.5"><span class="text-brand-500 font-bold">★</span> <span><strong>雲端 LLM 個性演化</strong>：32-Byte 基因與行為樹隨你的生活習慣動態調整。</span></li>
+              <li class="flex items-start gap-2.5"><span class="text-brand-500 font-bold">★</span> <span><strong>第一人稱生活日記</strong>：寵物視角記錄你的微小努力，以週摘要形成長效回憶。</span></li>
+              <li class="flex items-start gap-2.5"><span class="text-brand-500 font-bold">★</span> <span><strong>連續 180 天實體明信片</strong>：滿半年必得專屬手寫感明信片，實體自律紀念碑。</span></li>
+              <li class="flex items-start gap-2.5"><span class="text-brand-500 font-bold">★</span> <span><strong>世代族譜與彩蛋孵化</strong>：成年後孵出下一代，每一代隨時可一鍵抽換回掌心。</span></li>
+            </ul>
+          </div>
+          <div class="mt-6 pt-4 border-t border-zen-borderLight text-xs font-semibold text-brand-700">
+            價值：所有需要雲端算力與資料維護的深度靈魂，由年費完全覆蓋。
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 2: Diary & Episodic Memory (第一人稱日記) -->
+  <section id="diary" class="py-16 border-t border-zen-border">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6">
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <span class="text-xs font-bold text-brand-600 tracking-wider uppercase">Episodic Memory</span>
+        <h2 class="text-2xl sm:text-3xl font-black text-zen-pine mt-1">寵物的第一人稱日記：牠真的記得你</h2>
+        <p class="text-xs sm:text-sm text-zen-muted mt-2">
+          不再是冷冰冰的折線圖與打卡率。每一篇日記，都是寵物以牠獨特的眼光看著你成長的珍貴寫真。
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <!-- Left: Diary Card Mockup -->
+        <div class="lg:col-span-7">
+          <div class="bg-[#FFFDF9] rounded-3xl p-7 sm:p-9 border-2 border-zen-border shadow-xl relative">
+            <div class="flex items-center justify-between border-b border-zen-borderLight pb-4 mb-6">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-brand-50 border border-brand-200 flex items-center justify-center text-lg">
+                  🐾
+                </div>
+                <div>
+                  <div class="text-xs font-bold text-zen-pine">豆豆的日記簿</div>
+                  <div class="text-[10px] text-zen-muted">第 20 週 · 伴隨清晨跑步記錄</div>
+                </div>
+              </div>
+              <span class="text-xs font-mono px-2 py-0.5 rounded bg-zen-border/40 text-zen-muted font-bold">Week 20</span>
+            </div>
+
+            <div class="text-sm sm:text-base leading-relaxed text-zen-pine/90 font-serif italic mb-6 space-y-3">
+              <p class="text-brand-700 font-semibold">
+                “ 還記得第 12 週，你第一次開始跑步嗎？ ”
+              </p>
+              <p>
+                那天你五點半就爬起來了，我還迷迷糊糊沒睡醒呢。一路上你喘得很厲害，但跑完對著我笑了一下。
+              </p>
+              <p>
+                現在你已經連續跑了整整 40 天，不知不覺，我也跟著你變成一隻習慣在晨光裡伸懶腰的早起型寵物了。
+              </p>
+            </div>
+
+            <div class="flex items-center justify-between pt-4 border-t border-zen-borderLight text-xs text-zen-muted">
+              <span>—— 你的專屬柴犬夥伴 · 留存在族譜記憶中</span>
+              <span class="text-brand-600 font-bold">長效情境回憶</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Technical Principles -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="p-5 rounded-2xl bg-amber-50/80 border border-amber-200/70 shadow-sm">
+            <div class="flex items-center gap-2 text-amber-900 font-bold text-xs uppercase mb-1.5">
+              <span>🛡️</span> 產品核心硬規則
+            </div>
+            <h4 class="text-sm font-extrabold text-amber-950 mb-1">寵物永遠不責備、不提失敗次數</h4>
+            <p class="text-xs text-amber-800 leading-relaxed">
+              傳統習慣工具往往因為斷簽紅叉造成罪惡感而讓用戶棄用。在 PetPal，寵物永遠只講自己的感受和你做到的事，徹底卸下自責焦慮。
+            </p>
+          </div>
+
+          <div class="glass-card p-5 rounded-2xl border border-zen-border">
+            <h4 class="text-sm font-bold text-zen-pine mb-1">故事用週摘要，數字用資料庫</h4>
+            <p class="text-xs text-zen-muted leading-relaxed">
+              絕不把整年原始記錄盲目倒給 LLM。數值由資料庫精準秒算（防幻覺），LLM 僅每週將精華濃縮為 300 字摘要，作為長期情境記憶（Episodic Memory）。
+            </p>
+          </div>
+
+          <div class="glass-card p-5 rounded-2xl border border-zen-border">
+            <h4 class="text-sm font-bold text-zen-pine mb-1">關鍵節點主動喚起</h4>
+            <p class="text-xs text-zen-muted leading-relaxed">
+              達成 100 天、第 10 次碰碰交友、或孵出下一代時，寵物會主動翻開記憶簿，與你聊起當初一起克服困難的第一步。
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 3: 180 Days Postcard (實體明信片) -->
+  <section id="postcard" class="py-16 border-t border-zen-border bg-white/40">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6">
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <span class="text-xs font-bold text-brand-600 tracking-wider uppercase">Physical Monument</span>
+        <h2 class="text-2xl sm:text-3xl font-black text-zen-pine mt-1">180 天自律紀念碑：專屬實體明信片</h2>
+        <p class="text-xs sm:text-sm text-zen-muted mt-2">
+          拒絕純機率抽獎。只要連續陪伴累積滿 180 天，你將必定收到一張由寵物以第一人稱宣告寄出的特規實體明信片。
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        <!-- Postcard Visual Simulation -->
+        <div class="bg-[#FAF7F0] p-6 sm:p-8 rounded-3xl border-2 border-zen-border shadow-lg transform md:-rotate-1 hover:rotate-0 transition duration-300">
+          <div class="border-2 border-dashed border-zen-border p-6 rounded-2xl bg-white flex flex-col justify-between min-h-[280px]">
+            <div>
+              <div class="flex justify-between items-start mb-6">
+                <div>
+                  <div class="text-xs font-bold tracking-widest text-brand-700 uppercase">PETPAL SOUL MONUMENT</div>
+                  <div class="text-lg font-black text-zen-pine mt-1">180 Days of Growth</div>
+                </div>
+                <div class="w-12 h-14 border border-zen-border rounded bg-zen-bg flex flex-col items-center justify-center text-[9px] font-mono text-zen-muted">
+                  <span>POSTAGE</span>
+                  <span class="text-xs">🐾</span>
+                </div>
+              </div>
+
+              <div class="space-y-2 text-xs font-serif text-zen-pine/80 italic leading-relaxed">
+                <p>「主人，這半年裡你一共完成了 340 次專注番茄鐘、走了 820 公里。」</p>
+                <p>「這是我為你挑選的半年紀念明信片，我把它寄到了你的掌心。未來的日子，我們還要一起看更多風景！」</p>
+              </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-zen-borderLight flex items-center justify-between text-[11px] text-zen-muted font-mono">
+              <span>族譜世代：Gen 1 初代柴犬</span>
+              <span class="text-brand-700 font-bold">NO. #00180-SOUL</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Explanations -->
+        <div class="space-y-4">
+          <div class="p-5 rounded-2xl glass-card border border-zen-border">
+            <h4 class="text-sm font-extrabold text-zen-pine mb-1 flex items-center gap-2">
+              <span class="text-brand-500 font-bold">●</span> 看得見、摸得著的自律勳章
+            </h4>
+            <p class="text-xs text-zen-muted leading-relaxed">
+              貼在書桌前、冰箱上，每天抬頭就能看見自己實打實走過半年的生活軌跡。實體紙質的厚度與手寫感，賦予自律最神聖的儀式感。
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl glass-card border border-zen-border">
+            <h4 class="text-sm font-extrabold text-zen-pine mb-1 flex items-center gap-2">
+              <span class="text-brand-500 font-bold">●</span> 寵物在日記中主動宣告寄出
+            </h4>
+            <p class="text-xs text-zen-muted leading-relaxed">
+              不是冷冰冰的物流通知信，而是某天早晨打開 App，寵物在日記裡俏皮地告訴你：「我幫你準備了一份禮物，今天寄出了喔！」
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl glass-card border border-zen-border">
+            <h4 class="text-sm font-extrabold text-zen-pine mb-1 flex items-center gap-2">
+              <span class="text-brand-500 font-bold">●</span> 100% 達標必得 · 零射倖性
+            </h4>
+            <p class="text-xs text-zen-muted leading-relaxed">
+              轉化為忠誠里程碑（Loyalty Milestone）制度，徹底告別機率抽獎帶來的落空感，符合最嚴格的合規標準。
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 4: Lineage & Cladogram (跨代族譜與彩蛋孵化) -->
+  <section id="lineage" class="py-16 border-t border-zen-border">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6">
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <span class="text-xs font-bold text-brand-600 tracking-wider uppercase">Multi-Generation Lineage</span>
+        <h2 class="text-2xl sm:text-3xl font-black text-zen-pine mt-1">跨代繁衍與族譜：每一代都活在掌心</h2>
+        <p class="text-xs sm:text-sm text-zen-muted mt-2">
+          告別養成遊戲「進化即永別」的遺憾。初代陪你考研、二代陪你入職，隨時可以一鍵將初代喚回實體螢幕。
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+        <div class="glass-card p-6 rounded-3xl border border-zen-border text-center">
+          <div class="w-12 h-12 mx-auto rounded-2xl bg-brand-50 border border-brand-200 flex items-center justify-center text-xl mb-3">
+            🥚
+          </div>
+          <h4 class="text-sm font-bold text-zen-pine mb-1">孵化雙門檻（至少 3 個月）</h4>
+          <p class="text-xs text-zen-muted leading-relaxed">
+            成年後需同時滿足「累積時間」與「習慣完成數」。即便極限自律用戶也需至少 3 個月，確保美術季度穩定釋出高品質新角色。
+          </p>
+        </div>
+
+        <div class="glass-card p-6 rounded-3xl border border-zen-border text-center">
+          <div class="w-12 h-12 mx-auto rounded-2xl bg-brand-50 border border-brand-200 flex items-center justify-center text-xl mb-3">
+            🧬
+          </div>
+          <h4 class="text-sm font-bold text-zen-pine mb-1">親緣圖譜去重抽樣</h4>
+          <p class="text-xs text-zen-muted leading-relaxed">
+            演化機率在「未解鎖角色池」上重新正規化計算，保證每一次努力孵化換來的都是從未見過的新角色，杜絕重複槓龜挫折。
+          </p>
+        </div>
+
+        <div class="glass-card p-6 rounded-3xl border border-zen-border text-center">
+          <div class="w-12 h-12 mx-auto rounded-2xl bg-brand-50 border border-brand-200 flex items-center justify-center text-xl mb-3">
+            🌳
+          </div>
+          <h4 class="text-sm font-bold text-zen-pine mb-1">32-Byte 靈魂隨時召喚</h4>
+          <p class="text-xs text-zen-muted leading-relaxed">
+            所有世代的性格基因與日記永久封存於 App 族譜中。只要點選初代柴犬，3 秒內透過 BLE 將基因寫入實體裝置，永不失去。
+          </p>
+        </div>
+      </div>
+
+      <!-- Lineage Flow Diagram Card -->
+      <div class="bg-white rounded-3xl p-6 sm:p-8 border border-zen-border text-center">
+        <div class="text-xs font-bold text-brand-700 tracking-wider uppercase mb-3">LINEAGE TIMELINE</div>
+        <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-xs sm:text-sm font-semibold text-zen-pine">
+          <span class="px-4 py-2 rounded-xl bg-zen-bg border border-zen-border">初代誕生（幼體）</span>
+          <span class="text-brand-500 font-bold">➔</span>
+          <span class="px-4 py-2 rounded-xl bg-zen-bg border border-zen-border">里程碑成長至成年</span>
+          <span class="text-brand-500 font-bold">➔</span>
+          <span class="px-4 py-2 rounded-xl bg-brand-50 border border-brand-300 text-brand-800">完成習慣孵出二代（彩蛋角色）</span>
+          <span class="text-brand-500 font-bold">➔</span>
+          <span class="px-4 py-2 rounded-xl bg-zen-bg border border-zen-border">隨時一鍵切換回裝置</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 5: Social & Anti-Cheat (社交彩蛋與防作弊) -->
+  <section id="social" class="py-16 border-t border-zen-border bg-white/50">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6">
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <span class="text-xs font-bold text-brand-600 tracking-wider uppercase">Subtle Social</span>
+        <h2 class="text-2xl sm:text-3xl font-black text-zen-pine mt-1">溫和社交：擦身相遇彩蛋與防作弊聯賽</h2>
+        <p class="text-xs sm:text-sm text-zen-muted mt-2">
+          不打擾、不強迫競爭。在 30 人溫暖小同溫層中互相打氣，並以硬體傳感器守護榮譽。
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Social Encounter -->
+        <div class="glass-card p-6 sm:p-8 rounded-3xl border border-zen-border flex flex-col justify-between">
+          <div>
+            <span class="text-xs font-bold text-brand-600 uppercase">PLG Encounter</span>
+            <h3 class="text-lg font-black text-zen-pine mt-1 mb-3">免費遇見付費的優雅彩蛋對白</h3>
+            <p class="text-xs text-zen-muted leading-relaxed mb-4">
+              當兩台 PetPal 在路上近場擦身相遇時，雙方將觸發極富詩意的隱藏互動，不打廣告卻讓免費用戶感受心靈差距：
+            </p>
+            <div class="space-y-3 text-xs">
+              <div class="p-3.5 rounded-xl bg-zen-bg border border-zen-border text-zen-pine">
+                <span class="font-bold text-zen-muted">免費端硬體螢幕顯示：</span><br>
+                <span class="italic font-serif">「剛才遇到的朋友好像看過很多世界呢……」</span><br>
+                <span class="text-[10px] text-zen-muted mt-1 block">（韌體內建台詞庫，由 BLE 廣播付費旗標觸發，0 雲端負擔）</span>
+              </div>
+              <div class="p-3.5 rounded-xl bg-brand-50 border border-brand-200 text-brand-900">
+                <span class="font-bold text-brand-700">付費端寵物日記記錄：</span><br>
+                <span class="italic font-serif">「今天在路上遇見了一隻純真沉穩的原型柴犬，讓我想起了我小時候的模樣。」</span><br>
+                <span class="text-[10px] text-brand-600 mt-1 block">（僅讀取物種編號，絕不出現對方個資，落實 100% 去識別化）</span>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-zen-borderLight text-[11px] text-zen-muted">
+            優雅在免費用戶心裡種下一顆「我也想帶牠看世界」的期待種子。
+          </div>
+        </div>
+
+        <!-- Anti-Cheat & Leagues -->
+        <div class="glass-card p-6 sm:p-8 rounded-3xl border border-zen-border flex flex-col justify-between">
+          <div>
+            <span class="text-xs font-bold text-brand-600 uppercase">Integrity League</span>
+            <h3 class="text-lg font-black text-zen-pine mt-1 mb-3">Duolingo 式 30 人小聯賽 ＋ IMU 防作弊</h3>
+            <ul class="space-y-3.5 text-xs sm:text-sm text-zen-body">
+              <li class="flex items-start gap-2.5">
+                <span class="text-brand-500 font-bold">●</span>
+                <span><strong>拒絕數十萬人的絕望大榜</strong>：每週動態分配 30 位節奏相近的同伴，前 5 名升階，良性激勵。</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <span class="text-brand-500 font-bold">●</span>
+                <span><strong>硬體信任根（Hardware Root of Trust）</strong>：ESP32 搭載 6 軸 IMU 與電容觸控，邊緣端直接分析人體步頻動態諧波。</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <span class="text-brand-500 font-bold">●</span>
+                <span><strong>杜絕搖步器刷榜</strong>：自動過濾等幅機械晃動，唯有經硬體認證的真實付出才能計入天梯，守護公正。</span>
+              </li>
+            </ul>
+          </div>
+          <div class="mt-4 pt-3 border-t border-zen-borderLight text-[11px] text-brand-700 font-semibold">
+            年終生成的全站趨勢觀察報告，保證為真實人類自律數據。
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 6: Annual Pricing & Bundle (純年費與首年同捆包) -->
+  <section id="pricing" class="py-20 border-t border-zen-border">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6">
+      <div class="text-center max-w-2xl mx-auto mb-14">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full zen-tag text-xs font-bold mb-3">
+          ANNUAL PLAN & BUNDLE
+        </div>
+        <h2 class="text-2xl sm:text-4xl font-black text-zen-pine">純年費方案與首發同捆限定版</h2>
+        <p class="text-xs sm:text-sm text-zen-muted mt-2">
+          統一採用純年費制，確保每位用戶都能走完「成長 ➔ 孵化 ➔ 180天實體明信片 ➔ 年終回顧」的完整生命週期。
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <!-- Option 1: Standalone Soul Pass Annual -->
+        <div class="glass-card rounded-3xl p-8 border border-zen-border shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-bold px-3 py-1 rounded-full bg-stone-100 text-zen-muted">軟體訂閱</span>
+              <span class="text-xs text-zen-muted">已擁有硬體用戶</span>
+            </div>
+            <h3 class="text-xl font-bold text-zen-pine mb-1">Soul Pass 純年費訂閱</h3>
+            <p class="text-xs text-zen-muted mb-6">為你的既有 PetPal 注入雲端 AI 靈魂</p>
+
+            <div class="flex items-baseline gap-2 mb-6 pb-6 border-b border-zen-borderLight">
+              <span class="text-4xl font-black text-zen-pine">NT$ 990</span>
+              <span class="text-xs text-zen-muted">/ 年（平均每月僅 NT$ 82）</span>
+            </div>
+
+            <ul class="space-y-3 text-xs text-zen-body">
+              <li class="flex items-center gap-2"><span class="text-brand-500 font-bold">✓</span> 雲端 LLM 性格動態演化行為樹</li>
+              <li class="flex items-center gap-2"><span class="text-brand-500 font-bold">✓</span> 寵物第一人稱生活日記（每週更新）</li>
+              <li class="flex items-center gap-2"><span class="text-brand-500 font-bold">✓</span> <strong>連續 180 天必得專屬實體自律明信片</strong></li>
+              <li class="flex items-center gap-2"><span class="text-brand-500 font-bold">✓</span> 跨代家族族譜與彩蛋孵化傳承</li>
+              <li class="flex items-center gap-2"><span class="text-brand-500 font-bold">✓</span> Spotify Wrapped 式個人年度回顧圖卡</li>
+              <li class="flex items-center gap-2"><span class="text-brand-500 font-bold">✓</span> 退訂凍結當下快照，重訂無縫接續</li>
+            </ul>
+          </div>
+
+          <div class="mt-8">
+            <a href="index.html#preorder" class="w-full py-3 rounded-xl glass-card border border-zen-border hover:bg-white text-center font-bold text-xs text-zen-pine block transition">
+              啟用或加購 Soul Pass 年費
+            </a>
+          </div>
+        </div>
+
+        <!-- Option 2: The Best Value Bundle -->
+        <div class="glass-card rounded-3xl p-8 border-2 border-brand-500 shadow-xl relative flex flex-col justify-between bg-white">
+          <div class="absolute -top-3.5 right-8 px-4 py-1 rounded-full bg-brand-500 text-white text-xs font-extrabold shadow-md">
+            🔥 首發推薦 · 現省 NT$ 400
+          </div>
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-bold px-3 py-1 rounded-full bg-brand-100 text-brand-800">首發限定套組</span>
+              <span class="text-xs font-bold text-brand-600">Hardware + Soul Pass</span>
+            </div>
+            <h3 class="text-xl font-bold text-zen-pine mb-1">靈魂共鳴首年典藏同捆版</h3>
+            <p class="text-xs text-zen-muted mb-6">實體硬體 ＋ 首年 Soul Pass 一步到位</p>
+
+            <div class="flex items-baseline gap-2 mb-6 pb-6 border-b border-zen-borderLight">
+              <span class="text-4xl font-black text-brand-600">NT$ 2,480</span>
+              <span class="text-xs text-zen-muted line-through">原價 NT$ 2,880</span>
+            </div>
+
+            <ul class="space-y-3 text-xs text-zen-body">
+              <li class="flex items-center gap-2"><span class="text-brand-500 font-bold">★</span> <strong>PetPal 實體桌面伴侶裝置乙台</strong>（ESP32-S3 · GC9A01）</li>
+              <li class="flex items-center gap-2"><span class="text-brand-500 font-bold">★</span> <strong>Soul Pass 靈魂演化通行證（完整一年份）</strong></li>
+              <li class="flex items-center gap-2"><span class="text-brand-500 font-bold">★</span> <strong>加贈：首發限定「靈魂相遇」紀念明信片封套</strong></li>
+              <li class="flex items-center gap-2"><span class="text-brand-500 font-bold">★</span> 包含免費版所有終身硬體功能（永不死、零懲罰）</li>
+              <li class="flex items-center gap-2"><span class="text-brand-500 font-bold">★</span> 連續陪伴 180 天必得專屬實體自律紀念明信片</li>
+              <li class="flex items-center gap-2"><span class="text-brand-500 font-bold">★</span> 全球早鳥 VIP 社群與首發封測特權</li>
+            </ul>
+          </div>
+
+          <div class="mt-8">
+            <a href="index.html#preorder" class="w-full py-3.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-center font-extrabold text-xs block transition shadow-md hover:shadow-lg">
+              立即以早鳥特惠預購同捆組 ➔
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Guarantee Promise Box -->
+      <div class="max-w-2xl mx-auto mt-10 p-5 rounded-2xl bg-brand-50/60 border border-brand-200 text-center text-xs text-brand-900 leading-relaxed">
+        <span class="font-bold">溫柔退訂承諾：</span>
+        年費期滿若未續訂，您的寵物會「凍結」在當下的個性快照與行為樹中，過往所有日記與世代族譜永久唯讀保留。我們<strong>絕不會將寵物格式化變回原型</strong>，只要未來隨時續訂即可無縫喚醒。
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 7: FAQ (常見問答) -->
+  <section class="py-16 border-t border-zen-border bg-white/50">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6">
+      <div class="text-center mb-10">
+        <span class="text-xs font-bold text-brand-600 tracking-wider uppercase">FAQ</span>
+        <h2 class="text-2xl font-black text-zen-pine mt-1">Soul Pass 訂閱常見問答</h2>
+      </div>
+
+      <div class="space-y-4 text-xs sm:text-sm">
+        <div class="p-5 rounded-2xl glass-card border border-zen-border">
+          <h4 class="font-bold text-zen-pine mb-1.5">Q1：為什麼統一採用「純年費制」，不提供月繳？</h4>
+          <p class="text-zen-muted leading-relaxed">
+            因為習慣養成與生命繁衍是一場長效旅程。PetPal 的孵化下一代需要至少 3 個月、實體自律明信片需要陪伴滿 180 天、年度回顧需滿一年。若採月費，用戶容易在初期因為急躁而中途退訂，錯過最動人的核心體驗。純年費制能確保每位訂閱者都能完整經歷走過一整年的感動。
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl glass-card border border-zen-border">
+          <h4 class="font-bold text-zen-pine mb-1.5">Q2：如果我只買硬體、不訂閱 Soul Pass，體驗會被閹割嗎？</h4>
+          <p class="text-zen-muted leading-relaxed">
+            絕對不會！免費用戶享有 1 隻由序號決定的完整原型寵物，習慣打卡、番茄鐘、久坐提醒、離線安全加密、成年解鎖 9 隻經典角色、以及硬體間的 BLE 近場擦身握手完全可用。寵物永遠不會餓死、沒有未上線懲罰，是一隻百分之百健康活著的桌面夥伴。
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl glass-card border border-zen-border">
+          <h4 class="font-bold text-zen-pine mb-1.5">Q3：180 天的實體明信片寄送需要額外付運費嗎？</h4>
+          <p class="text-zen-muted leading-relaxed">
+            不需要。只要您為 Soul Pass 年費用戶且自律陪伴累積達標 180 天，專屬明信片的印製與平信寄送費用已全額包含在年費服務中，我們將直接由寵物在日記宣告後寄送至您的收件地址。
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl glass-card border border-zen-border">
+          <h4 class="font-bold text-zen-pine mb-1.5">Q4：上傳習慣日誌到雲端，會有隱私洩露的風險嗎？</h4>
+          <p class="text-zen-muted leading-relaxed">
+            完全不會。上傳的資料僅包含去識別化（匿名）的「習慣標籤、完成時間與次數」，不含任何姓名、定位或敏感個資。在 BLE 擦身相遇時，雙方日記也僅讀取 1-Byte 的物種代碼，堅決不交換任何個人資訊。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-12 border-t border-zen-border bg-[#ECE6DC] text-xs text-zen-muted mt-auto">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-brand-500"></span>
+        <span class="font-bold text-zen-pine">PetPal 桌面自律陪伴寵物</span>
+        <span>· Soul Pass 靈魂演化通行證</span>
+      </div>
+      <div class="flex items-center gap-5">
+        <a href="index.html" class="hover:text-zen-pine transition">返回官網首頁</a>
+        <a href="index.html#preorder" class="hover:text-zen-pine transition">早鳥預購</a>
+        <a href="https://github.com/UncleLin332/petpal-landing" target="_blank" class="hover:text-zen-pine transition">GitHub 開源專案</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
