@@ -1,0 +1,2433 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PetPal 跨代族譜與習慣演化模擬儀 🧬｜2026 臺科青創黑客松複賽 Demo</title>
+  <meta name="description" content="PetPal 跨代族譜與生活習慣演化模擬儀：模擬 5 位不同使用者真實生活、成年個性確立、跨代基因傳承與家族族譜可視化。">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN for Radar Chart -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Google Fonts: Plus Jakarta Sans, Inter, Noto Sans TC, JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eefaf6',
+              100: '#d7f4eb',
+              200: '#b2eadb',
+              300: '#7ddac4',
+              400: '#43c2a6',
+              500: '#14a888', // Exact iOS App FAB & Checkmark Jade Green
+              600: '#0f856c',
+              700: '#0f6b57',
+              800: '#105547',
+              900: '#10463b',
+              950: '#052923',
+            },
+            zen: {
+              bg: '#f2ede2',      // Exact iOS App Linen Oatmeal Background
+              surface: '#faf7f2', // Soft warm cream
+              card: '#ffffff',    // Pure crisp card white
+              pine: '#16302c',    // Headline Text Dark Pine
+              body: '#3d524e',
+              muted: '#748884',
+              border: '#e2dbcd',
+              borderLight: '#ece6dc',
+              sand: '#e8ded0'
+            }
+          },
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'Inter', 'Noto Sans TC', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #f2ede2;
+      color: #16302c;
+      font-family: 'Plus Jakarta Sans', 'Noto Sans TC', sans-serif;
+    }
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    /* Subtle organic grid/texture backdrop from Landing Page */
+    .bg-zen-pattern {
+      background-size: 40px 40px;
+      background-image: 
+        linear-gradient(to right, rgba(22, 48, 44, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(22, 48, 44, 0.04) 1px, transparent 1px);
+    }
+    /* Glass navigation */
+    .glass-nav {
+      background: rgba(242, 237, 226, 0.94);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    /* LCD Glass Bezel Screen */
+    .lcd-glass {
+      background: radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.85) 0%, rgba(230, 247, 243, 0.4) 45%, rgba(20, 168, 136, 0.08) 100%), #ffffff;
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.08), inset 0 0 0 1px rgba(22, 48, 44, 0.08);
+    }
+    /* Tree connector styles */
+    .tree-line {
+      stroke: #d5cbba;
+      stroke-width: 2.5;
+      stroke-dasharray: 6;
+      animation: dashFlow 25s linear infinite;
+    }
+    .tree-line-active {
+      stroke: #14a888;
+      stroke-width: 3;
+      stroke-dasharray: none;
+      filter: drop-shadow(0 2px 6px rgba(20, 168, 136, 0.35));
+    }
+    @keyframes dashFlow {
+      to { stroke-dashoffset: -100; }
+    }
+    /* Range Slider styling */
+    input[type=range] {
+      -webkit-appearance: none;
+      background: #e2dbcd;
+      height: 6px;
+      border-radius: 9999px;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #14a888;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(20, 168, 136, 0.45);
+      transition: transform 0.12s ease;
+      border: 2.5px solid #ffffff;
+    }
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white bg-zen-pattern">
+
+  <!-- ==================== 1. TOP NAVIGATION & BRAND BAR ==================== -->
+  <header class="border-b border-zen-border glass-nav sticky top-0 z-50 transition-all">
+    <div class="max-w-[1720px] mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
+      
+      <!-- Brand Logo & Pitch Tag -->
+      <div class="flex items-center gap-3 flex-shrink-0">
+        <a href="index.html" class="flex items-center gap-3 group">
+          <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand-600 to-brand-400 text-white flex items-center justify-center font-extrabold shadow-md shadow-brand-500/25 group-hover:scale-105 transition-transform duration-200">
+            <span class="text-xl">🐾</span>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-extrabold text-xl tracking-tight text-zen-pine group-hover:text-brand-600 transition-colors">PetPal</span>
+              <span class="text-xs px-2.5 py-0.5 rounded-full bg-brand-50 text-brand-700 font-semibold border border-brand-200">演化模型與族譜模擬儀</span>
+              <span class="text-[11px] px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 font-semibold border border-amber-200 hidden sm:inline-block">2026 臺科青創複賽 Demo</span>
+            </div>
+            <p class="text-[11px] text-zen-muted font-medium leading-tight">5 位真實生活情境 ➔ 每日習慣向量漂移 ➔ 跨代族譜可視化</p>
+          </div>
+        </a>
+      </div>
+
+      <!-- Top Right Actions -->
+      <div class="flex items-center gap-2.5 flex-shrink-0">
+        <button id="btnCompareMode" class="text-xs font-semibold text-brand-800 hover:text-brand-900 px-3.5 py-2 rounded-xl border border-brand-200 bg-brand-50 hover:bg-brand-100 transition shadow-xs flex items-center gap-1.5">
+          <span>📊</span>
+          <span>5 人生活演化總覽</span>
+        </button>
+        <a href="index.html" class="text-xs font-semibold text-zen-body hover:text-zen-pine px-3.5 py-2 rounded-xl border border-zen-border bg-white hover:bg-zen-surface transition shadow-xs flex items-center gap-1">
+          <span>← 返回官網首頁</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- 5 Independent User Personas Tab Bar (Centered Strip) -->
+    <div class="border-t border-zen-borderLight bg-[#f7f3eb]/90 px-4 sm:px-6 py-2.5">
+      <div class="max-w-[1720px] mx-auto flex items-center justify-between gap-3 overflow-x-auto">
+        <div class="flex items-center gap-1 text-[11px] font-bold text-zen-muted uppercase tracking-wider flex-shrink-0 mr-1">
+          <span>👤</span> 模擬情境：
+        </div>
+
+        <div class="flex items-center gap-2.5 flex-1 min-w-max">
+          <!-- Persona 1: Alex -->
+          <button id="btnUserAlex" class="user-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2.5 bg-white text-brand-700 border-2 border-brand-500 shadow-sm ring-2 ring-brand-500/15">
+            <span class="text-base">💻</span>
+            <div class="text-left leading-tight">
+              <div class="font-bold text-zen-pine">Alex (資工碩一)</div>
+              <div class="text-[10px] text-brand-600 font-medium">深夜心流 · 渡鴉家族</div>
+            </div>
+          </button>
+
+          <!-- Persona 2: Emma -->
+          <button id="btnUserEmma" class="user-tab-btn px-4 py-2 rounded-xl text-xs font-semibold text-zen-body hover:text-zen-pine hover:bg-white/80 transition-all flex items-center gap-2.5 bg-white/60 border border-zen-border">
+            <span class="text-base">☀️</span>
+            <div class="text-left leading-tight">
+              <div class="font-bold text-zen-pine">Emma (商研所)</div>
+              <div class="text-[10px] text-zen-muted font-normal">晨型自律 · 曦光家族</div>
+            </div>
+          </button>
+
+          <!-- Persona 3: John -->
+          <button id="btnUserJohn" class="user-tab-btn px-4 py-2 rounded-xl text-xs font-semibold text-zen-body hover:text-zen-pine hover:bg-white/80 transition-all flex items-center gap-2.5 bg-white/60 border border-zen-border">
+            <span class="text-base">🏃</span>
+            <div class="text-left leading-tight">
+              <div class="font-bold text-zen-pine">John (外商主管)</div>
+              <div class="text-[10px] text-zen-muted font-normal">萬步減壓 · 踏風家族</div>
+            </div>
+          </button>
+
+          <!-- Persona 4: Chloe -->
+          <button id="btnUserChloe" class="user-tab-btn px-4 py-2 rounded-xl text-xs font-semibold text-zen-body hover:text-zen-pine hover:bg-white/80 transition-all flex items-center gap-2.5 bg-white/60 border border-zen-border">
+            <span class="text-base">📚</span>
+            <div class="text-left leading-tight">
+              <div class="font-bold text-zen-pine">Chloe (醫學大四)</div>
+              <div class="text-[10px] text-zen-muted font-normal">國考專注 · 智慧梟家族</div>
+            </div>
+          </button>
+
+          <!-- Persona 5: Marcus -->
+          <button id="btnUserMarcus" class="user-tab-btn px-4 py-2 rounded-xl text-xs font-semibold text-zen-body hover:text-zen-pine hover:bg-white/80 transition-all flex items-center gap-2.5 bg-white/60 border border-zen-border">
+            <span class="text-base">🎨</span>
+            <div class="text-left leading-tight">
+              <div class="font-bold text-zen-pine">Marcus (居家設計)</div>
+              <div class="text-[10px] text-zen-muted font-normal">防坐肌力 · 幻影豹家族</div>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== 2. TIMELINE CONTROLLER BAR ==================== -->
+  <section class="border-b border-zen-border bg-white/90 backdrop-blur-md px-4 sm:px-6 py-3 sticky top-[125px] z-40 shadow-xs">
+    <div class="max-w-[1720px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      
+      <!-- Play & Time Scrubber -->
+      <div class="flex items-center gap-4 w-full md:w-auto flex-1 max-w-2xl">
+        <button id="btnPlayPause" class="w-10 h-10 rounded-xl bg-brand-500 hover:bg-brand-600 text-white flex items-center justify-center font-bold shadow-md shadow-brand-500/25 transition active:scale-95 flex-shrink-0" title="自動推進演化時間">
+          <span id="playIcon" class="text-sm">▶</span>
+        </button>
+        
+        <div class="flex-1 flex flex-col gap-1">
+          <div class="flex justify-between items-center text-xs">
+            <span class="font-semibold text-zen-pine flex items-center gap-1.5">
+              <span>⏳</span> 生活累積天數：<strong id="txtTimelineDay" class="font-mono text-brand-600 text-sm">第 30 天</strong>
+            </span>
+            <span id="txtTimelinePhase" class="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-brand-50 text-brand-700 font-semibold border border-brand-200">
+              Phase: Gen 1 成年確立
+            </span>
+          </div>
+          <input id="timelineSlider" type="range" min="1" max="180" value="30" class="w-full">
+        </div>
+      </div>
+
+      <!-- Milestone Quick Jump Buttons -->
+      <div class="flex items-center gap-2 overflow-x-auto w-full md:w-auto justify-end text-xs">
+        <span class="text-zen-muted text-[11px] mr-1 hidden lg:inline font-medium">階段快轉：</span>
+        
+        <button data-day="1" class="jump-btn px-3 py-1.5 rounded-xl bg-zen-surface hover:bg-white text-zen-body border border-zen-border text-[11px] font-mono transition shadow-xs">
+          Day 1 始祖幼體
+        </button>
+
+        <button data-day="30" class="jump-btn px-3 py-1.5 rounded-xl bg-brand-50 hover:bg-brand-100 text-brand-800 border border-brand-200 text-[11px] font-mono font-semibold transition shadow-xs">
+          Day 30 成年確立 ⭐
+        </button>
+
+        <button data-day="90" class="jump-btn px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-[11px] font-mono font-semibold transition shadow-xs">
+          Day 90 孵化第 2 代 🐣
+        </button>
+
+        <button data-day="180" class="jump-btn px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-[11px] font-mono font-semibold transition shadow-xs">
+          Day 180 解鎖第 3 代 🕊️
+        </button>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ==================== 3. MAIN WORKSPACE ==================== -->
+  <main class="flex-1 max-w-[1720px] w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- ==================== LEFT COLUMN: 家族族譜樹與每日習慣串流 (7 Cols) ==================== -->
+    <section class="lg:col-span-7 flex flex-col gap-6">
+
+      <!-- Persona Story Card Banner -->
+      <div class="p-5 rounded-2xl bg-white border border-zen-border flex items-start gap-4 shadow-sm">
+        <div id="userAvatar" class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-500/20 to-brand-100 text-brand-700 flex items-center justify-center text-3xl shadow-sm border border-brand-200 flex-shrink-0">
+          💻
+        </div>
+        <div class="flex-1">
+          <div class="flex items-center justify-between">
+            <h2 id="userNameTitle" class="text-base font-bold text-zen-pine flex items-center gap-2">
+              Alex 的生活軌跡（臺科大資工研究生）
+            </h2>
+            <span id="userTag" class="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-brand-50 text-brand-700 border border-brand-200 font-semibold">
+              資工所碩一 · 午夜心流型
+            </span>
+          </div>
+          <p id="userStoryDesc" class="text-xs text-zen-body mt-1.5 leading-relaxed">
+            白天上課做研究，深夜 23:00~03:00 專注寫論文與 Code。手機習慣收進抽屜，每天使用 PetPal 裝置完成 4~6 輪深度番茄鐘。他的生活環境壓力是：<strong>極高專注、熬夜研究、低社交、定時補水</strong>。
+          </p>
+          <div class="mt-3 flex items-center gap-4 text-[11px] text-zen-muted font-mono">
+            <span>📅 領養起始：2026 年 9 月</span>
+            <span>·</span>
+            <span>📍 裝置：PetPal 1.28" S3 純白款</span>
+            <span>·</span>
+            <span id="txtUserStreak" class="text-brand-600 font-bold">連續自律：30 天</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Family Tree Graph Card -->
+      <div class="bg-white rounded-2xl border border-zen-border p-5 sm:p-6 shadow-sm flex-1 flex flex-col justify-between relative overflow-hidden">
+        
+        <!-- Header of Tree -->
+        <div class="flex items-center justify-between mb-3 z-10">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">🌳</span>
+            <h3 class="text-sm font-bold text-zen-pine uppercase tracking-wider">家族跨代演化族譜 (Lineage Tree)</h3>
+          </div>
+          <span class="text-xs text-zen-muted">💡 點選節點可檢視右側生活數據與靈魂日記</span>
+        </div>
+
+        <!-- The Visual Tree Node Graph -->
+        <div class="relative w-full py-4 min-h-[460px] flex flex-col justify-between z-10" id="treeContainer">
+          
+          <!-- SVG Connecting Lines -->
+          <svg class="absolute inset-0 w-full h-full pointer-events-none z-0" id="treeSvgLines">
+            <!-- Dynamically populated via JS -->
+          </svg>
+
+          <!-- Generation 1 Level -->
+          <div class="flex flex-col items-center z-10">
+            <span class="text-[10px] font-mono uppercase tracking-widest text-zen-muted font-bold mb-2">
+              ── GENERATION 1 始祖世代 (領養原型與成年定型) ──
+            </span>
+            <div class="flex items-center justify-center gap-6" id="gen1Container">
+              <!-- Gen 1 Cards populated by JS -->
+            </div>
+          </div>
+
+          <!-- Generation 2 Level -->
+          <div class="flex flex-col items-center z-10 my-4">
+            <span class="text-[10px] font-mono uppercase tracking-widest text-brand-700 font-bold mb-2">
+              ── GENERATION 2 第二代傳承 (累積 90 天生活結晶孵化) ──
+            </span>
+            <div class="flex items-center justify-center gap-6" id="gen2Container">
+              <!-- Gen 2 Cards populated by JS -->
+            </div>
+          </div>
+
+          <!-- Generation 3 Level -->
+          <div class="flex flex-col items-center z-10">
+            <span class="text-[10px] font-mono uppercase tracking-widest text-amber-700 font-bold mb-2">
+              ── GENERATION 3 第三代究極繁衍 (自律滿 180 天百日紀念) ──
+            </span>
+            <div class="flex items-center justify-center gap-6" id="gen3Container">
+              <!-- Gen 3 Cards populated by JS -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Daily Habit Stream Ticker at Bottom -->
+        <div class="mt-4 pt-4 border-t border-zen-border z-10">
+          <div class="flex items-center justify-between text-[11px] mb-2.5">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-brand-500 animate-pulse"></span>
+              <span class="text-zen-pine font-bold">每日真實生活習慣記錄串流 (Daily Habit & Health Feed)</span>
+            </div>
+            <div class="hidden sm:flex items-center gap-1.5 text-[10px] font-mono">
+              <span class="px-2 py-0.5 rounded-md bg-sky-50 text-sky-800 border border-sky-200 font-medium">💧 喝水</span>
+              <span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200 font-medium">🏃‍♂️ 散步</span>
+              <span class="px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200 font-medium">🏋️ 健身</span>
+              <span class="px-2 py-0.5 rounded-md bg-purple-50 text-purple-800 border border-purple-200 font-medium">📖 閱讀</span>
+              <span class="px-2 py-0.5 rounded-md bg-teal-50 text-teal-800 border border-teal-200 font-medium">🎯 專注</span>
+              <span class="px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-800 border border-indigo-200 font-medium">🌙 作息</span>
+            </div>
+          </div>
+
+          <!-- Habit Log Viewport -->
+          <div class="p-3.5 rounded-2xl bg-zen-surface border border-zen-border text-xs text-zen-body space-y-2.5 max-h-[230px] overflow-y-auto" id="habitLog">
+            <div class="text-zen-muted">// 點擊上方「▶ 播放」或拖曳時間軸，觀察每日多元習慣如何實時驅動基因演化...</div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ==================== RIGHT COLUMN: 生命歷程數據儀表板 (5 Cols) ==================== -->
+    <section class="lg:col-span-5 flex flex-col gap-6">
+
+      <!-- Right Panel: Comprehensive Life History & Telemetry Dashboard -->
+      <div class="bg-white rounded-2xl border border-zen-border p-6 shadow-sm flex flex-col justify-between" id="provenancePanel">
+        
+        <!-- Header of Dashboard -->
+        <div>
+          <div class="flex items-center justify-between pb-3 border-b border-zen-border">
+            <div class="flex items-center gap-2.5">
+              <span class="text-xl">📊</span>
+              <div>
+                <h3 class="text-base font-bold text-zen-pine" id="panelPetTitle">
+                  午夜深思渡鴉 (Cyber-Raven)
+                </h3>
+                <span class="text-[11px] font-mono text-brand-600 font-semibold" id="panelPetSubtitle">
+                  Generation 1 · 成年期 · 心流極客
+                </span>
+              </div>
+            </div>
+            <span class="text-xs px-2.5 py-1 rounded-full bg-brand-50 text-brand-700 font-mono font-semibold border border-brand-200" id="panelStatusBadge">
+              已成年確立
+            </span>
+          </div>
+
+          <!-- Top Half of Dashboard: LCD Twin & Radar Chart side-by-side -->
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 mt-5 items-center">
+            
+            <!-- 1.28" Circular LCD Display Simulator (5 cols) -->
+            <div class="sm:col-span-5 flex flex-col items-center">
+              <!-- Physical Device Matte White Casing Bezel -->
+              <div class="relative w-[150px] h-[150px] rounded-full p-2.5 bg-gradient-to-b from-[#faf7f2] via-[#ede6d8] to-[#d8cfbe] shadow-lg flex items-center justify-center border-4 border-white">
+                <!-- 240x240 LCD Canvas Viewport -->
+                <div class="relative w-[128px] h-[128px] rounded-full overflow-hidden lcd-glass border border-zen-border flex items-center justify-center">
+                  <canvas id="lcdCanvas" width="240" height="240" class="w-full h-full"></canvas>
+                  
+                  <!-- Screen Status Pill -->
+                  <div class="absolute top-1.5 px-2 py-0.5 rounded-full bg-white/80 backdrop-blur-xs text-[8px] font-mono text-zen-pine border border-zen-border pointer-events-none font-bold">
+                    <span id="screenName">Raven</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-2.5 text-center">
+                <span class="text-[10px] text-zen-muted font-mono font-medium">PetPal 1.28" 實機模擬</span>
+                <div class="text-[11px] font-bold text-brand-700" id="screenAuraLabel">心流極客星環</div>
+              </div>
+            </div>
+
+            <!-- 6-Axis Dynamic Radar Chart (7 cols) -->
+            <div class="sm:col-span-7 flex flex-col">
+              <div class="flex justify-between items-center text-xs mb-1">
+                <span class="font-semibold text-zen-pine">特質向量即時形變：</span>
+                <span class="font-mono text-brand-700 text-[11px] font-bold" id="radarSumLabel">Focus: 92%</span>
+              </div>
+              <div class="relative w-full h-[155px] flex items-center justify-center">
+                <canvas id="petRadarChart"></canvas>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Mid Section 1: Quantified Real-Life Habits (生活數據看板) -->
+          <div class="mt-5 pt-4 border-t border-zen-border">
+            <div class="flex items-center justify-between mb-2.5">
+              <span class="text-xs font-bold text-zen-pine uppercase tracking-wider flex items-center gap-1.5">
+                <span>📈</span> 真實生活環境壓力數據 (Habits Metric)
+              </span>
+              <span class="text-[10px] font-mono text-zen-muted">Sensor Telemetry</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2.5 text-xs">
+              <div class="p-3 rounded-xl bg-zen-surface border border-zen-border">
+                <div class="text-[11px] text-zen-muted flex items-center gap-1">
+                  <span>🎯</span> 累計番茄鐘深度專注
+                </div>
+                <div class="text-base font-bold font-mono text-zen-pine mt-0.5" id="statFocusHours">
+                  148.5 小時
+                </div>
+                <div class="text-[10px] text-zen-muted mt-0.5" id="statFocusSub">
+                  無中斷完成率 94.2%
+                </div>
+              </div>
+
+              <div class="p-3 rounded-xl bg-zen-surface border border-zen-border">
+                <div class="text-[11px] text-zen-muted flex items-center gap-1">
+                  <span>🌙</span> 晝夜作息偏向
+                </div>
+                <div class="text-base font-bold font-mono text-zen-pine mt-0.5" id="statCircadian">
+                  -42 (深研夜貓)
+                </div>
+                <div class="text-[10px] text-zen-muted mt-0.5" id="statCircadianSub">
+                  平均就寢 02:40 AM
+                </div>
+              </div>
+
+              <div class="p-3 rounded-xl bg-zen-surface border border-zen-border">
+                <div class="text-[11px] text-zen-muted flex items-center gap-1">
+                  <span>🏃‍♂️</span> IMU 累計步數
+                </div>
+                <div class="text-base font-bold font-mono text-zen-pine mt-0.5" id="statSteps">
+                  182,400 步
+                </div>
+                <div class="text-[10px] text-zen-muted mt-0.5" id="statStepsSub">
+                  日均 6,080 步 (久坐偏多)
+                </div>
+              </div>
+
+              <div class="p-3 rounded-xl bg-zen-surface border border-zen-border">
+                <div class="text-[11px] text-zen-muted flex items-center gap-1">
+                  <span>🐾</span> 撫摸互動打卡
+                </div>
+                <div class="text-base font-bold font-mono text-zen-pine mt-0.5" id="statTouch">
+                  342 次
+                </div>
+                <div class="text-[10px] text-zen-muted mt-0.5" id="statTouchSub">
+                  防久坐離座摸摸 120 次
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mid Section 2: Real-time Next-Gen Incubation Prediction (下一代孵化動態預測) -->
+          <div class="mt-5 pt-4 border-t border-zen-border">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-zen-pine uppercase tracking-wider flex items-center gap-1.5">
+                <span>🐣</span> 下一代動態孵化預測 (Floating Incubation Engine)
+              </span>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 font-semibold" id="txtIncubationSpeed">
+                自律加速：1.38×
+              </span>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-zen-surface border border-zen-border text-xs space-y-3">
+              <!-- Floating Countdown & Progress Bar -->
+              <div>
+                <div class="flex justify-between items-center text-[11px] mb-1">
+                  <span class="text-zen-body">目前世代結晶累積進度：</span>
+                  <span class="font-mono text-brand-700 font-bold" id="txtIncubationRemaining">
+                    預計剩餘 12 天孵化 (進度 74%)
+                  </span>
+                </div>
+                <div class="w-full bg-zen-border h-2 rounded-full overflow-hidden">
+                  <div id="barIncubationProgress" class="h-full bg-gradient-to-r from-brand-500 to-emerald-400 transition-all duration-200" style="width: 74%;"></div>
+                </div>
+                <div class="flex justify-between text-[10px] text-zen-muted mt-1 font-mono">
+                  <span>Day 1 始祖種子</span>
+                  <span id="txtNextTargetMilestone">下一階段閾值: Day 90</span>
+                </div>
+              </div>
+
+              <!-- Realtime Shifting Probabilities of Next Gen Species (Dynamic 12 Candidates Grid) -->
+              <div class="space-y-2 pt-2.5 border-t border-zen-borderLight">
+                <div class="text-[11px] font-semibold text-zen-pine flex justify-between items-center">
+                  <span>隨當前習慣即時浮動之子代候選群（依最高機率孵化 · 親代已排除）：</span>
+                  <span class="text-[10px] font-mono text-brand-700 bg-brand-50 px-2 py-0.5 rounded-md border border-brand-200 font-bold">去重 Softmax 預測</span>
+                </div>
+
+                <!-- Scrollable 2-Column Responsive Candidates Grid -->
+                <div id="incubationCandidatesGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[300px] overflow-y-auto pr-1">
+                  <!-- Dynamic candidate cards rendered via JavaScript -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Section 1: Genetic Inheritance & Mutation Engineering (基因傳承分析) -->
+          <div class="mt-5 pt-4 border-t border-zen-border">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-zen-pine uppercase tracking-wider flex items-center gap-1.5">
+                <span>🧬</span> 牠是怎麼來的？(Genetic Provenance)
+              </span>
+              <span class="text-[10px] font-mono text-brand-700 bg-brand-50 px-2 py-0.5 rounded-full border border-brand-200 font-semibold">
+                Mendelian Engine
+              </span>
+            </div>
+
+            <!-- Provenance Story Explanation -->
+            <div class="p-3.5 rounded-xl bg-zen-surface border border-zen-border text-xs space-y-2">
+              <div class="flex items-center justify-between text-[11px]">
+                <span class="text-zen-muted">親代基因傳承率：</span>
+                <span class="font-mono text-brand-700 font-bold" id="provenanceInheritRate">
+                  82% 繼承自父代 (Mochi 初始種子)
+                </span>
+              </div>
+              <div class="w-full bg-zen-border h-1.5 rounded-full overflow-hidden">
+                <div id="barInheritance" class="h-full bg-gradient-to-r from-brand-500 to-emerald-400" style="width: 82%;"></div>
+              </div>
+
+              <div class="text-[11px] text-zen-body leading-relaxed" id="provenanceText">
+                因為主人 Alex 連續 30 天在深夜進行高強度番茄鐘，環境壓力打破了初始幼體的平衡，基因向專注耐受度極度漂移。頭部突變出賽博微型目鏡，身體色盤由原白轉化為冷幽青黑。
+              </div>
+
+              <!-- 2 Technical Deep Indicators -->
+              <div class="pt-2 border-t border-zen-borderLight flex items-center justify-between text-[11px] font-mono">
+                <span class="text-zen-muted">
+                  習慣共振 β: <strong class="text-brand-700" id="provenanceBeta">1.46×</strong>
+                </span>
+                <span class="text-zen-muted">
+                  基因突變熵 H: <strong class="text-purple-700" id="provenanceEntropy">1.82 bit</strong>
+                </span>
+                <span class="text-zen-muted">
+                  封包: <strong class="text-emerald-700">32 Bytes</strong>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Section 2: Milestone Soul Diary (生活靈魂日記) -->
+          <div class="mt-4 pt-4 border-t border-zen-border">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-zen-pine uppercase tracking-wider flex items-center gap-1.5">
+                <span>📖</span> 該世代成年紀念靈魂日記
+              </span>
+              <span class="text-[10px] font-mono text-amber-800 font-semibold bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">1st Person Diary</span>
+            </div>
+
+            <div class="p-4 rounded-xl bg-zen-surface border border-zen-border text-xs text-zen-pine leading-relaxed italic" id="panelDiaryContent">
+              "午夜 02:15，房間只有螢幕的微光。主人剛敲完最後一行程式碼，深深吐了一口氣。我看見你眼裡的疲憊，但也看見了完成專注時的滿足。我的賽博目鏡亮起藍光，今晚，我們又一起走過了一段了不起的路。"
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- ==================== 4. 5-PERSON COMPARISON MODAL (5人演化數據總覽) ==================== -->
+  <div id="compareModal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-white border border-zen-border rounded-3xl max-w-5xl w-full p-6 sm:p-8 shadow-2xl flex flex-col max-h-[90vh] overflow-y-auto">
+      
+      <div class="flex items-center justify-between pb-4 border-b border-zen-border">
+        <div>
+          <h2 class="text-lg font-bold text-zen-pine flex items-center gap-2">
+            <span>📊</span> 5 位使用者生活情境與族譜演化全景對比
+          </h2>
+          <p class="text-xs text-zen-muted mt-0.5">向評審證明：同樣都是白色的 Mochi 初始幼體，在 5 種不同生活環境壓力下，誕生出截然不同的靈魂伴侶。</p>
+        </div>
+        <button id="btnCloseCompare" class="w-8 h-8 rounded-full bg-zen-surface hover:bg-zen-border text-zen-pine flex items-center justify-center font-bold text-sm transition">
+          ✕
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+        
+        <!-- 1. Alex -->
+        <div class="p-4 rounded-2xl bg-zen-surface border border-zen-border flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-sm font-bold text-zen-pine">💻 Alex (資工所)</span>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-brand-50 text-brand-700 border border-brand-200">午夜極客</span>
+            </div>
+            <div class="text-xs text-zen-body space-y-1 mb-3">
+              <div>• 核心壓力：深夜 6 輪番茄鐘、熬夜寫 Code</div>
+              <div>• Gen 1 成年：<strong>午夜深思渡鴉</strong></div>
+              <div>• Gen 2 子代：<strong>賽博機械隼</strong></div>
+              <div>• Gen 3 傳奇：<strong>時空旅行者·克羅諾斯</strong></div>
+            </div>
+          </div>
+          <div class="p-2.5 bg-white rounded-xl text-[11px] text-zen-muted font-mono border border-zen-borderLight">
+            累計專注：580 小時 · 習慣共振 β：2.12×
+          </div>
+        </div>
+
+        <!-- 2. Emma -->
+        <div class="p-4 rounded-2xl bg-zen-surface border border-zen-border flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-sm font-bold text-zen-pine">☀️ Emma (商研所)</span>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">破曉自律</span>
+            </div>
+            <div class="text-xs text-zen-body space-y-1 mb-3">
+              <div>• 核心壓力：06:15 晨水、商管晨讀、校園慢跑</div>
+              <div>• Gen 1 成年：<strong>曦光守護者</strong></div>
+              <div>• Gen 2 子代：<strong>深林小樹熊</strong></div>
+              <div>• Gen 3 傳奇：<strong>星芒療癒使</strong></div>
+            </div>
+          </div>
+          <div class="p-2.5 bg-white rounded-xl text-[11px] text-zen-muted font-mono border border-zen-borderLight">
+            累計晨讀：180 天 · 步數：1,650,000 步
+          </div>
+        </div>
+
+        <!-- 3. John -->
+        <div class="p-4 rounded-2xl bg-zen-surface border border-zen-border flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-sm font-bold text-zen-pine">🏃 John (外商主管)</span>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">減壓萬步</span>
+            </div>
+            <div class="text-xs text-zen-body space-y-1 mb-3">
+              <div>• 核心壓力：午間萬步快走、戶外登山、呼吸減壓</div>
+              <div>• Gen 1 成年：<strong>靈動位元狐</strong></div>
+              <div>• Gen 2 子代：<strong>熔岩鋼鐵巨靈</strong></div>
+              <div>• Gen 3 傳奇：<strong>遠峰守護靈·禪意大地</strong></div>
+            </div>
+          </div>
+          <div class="p-2.5 bg-white rounded-xl text-[11px] text-zen-muted font-mono border border-zen-borderLight">
+            累計步數：2,100,000 步 · 摸摸減壓：1,800 次
+          </div>
+        </div>
+
+        <!-- 4. Chloe -->
+        <div class="p-4 rounded-2xl bg-zen-surface border border-zen-border flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-sm font-bold text-zen-pine">📚 Chloe (醫學大四)</span>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-teal-50 text-teal-800 border border-teal-200">國考規律</span>
+            </div>
+            <div class="text-xs text-zen-body space-y-1 mb-3">
+              <div>• 核心壓力：醫考文獻衝刺、大容量補水、眼部放鬆</div>
+              <div>• Gen 1 成年：<strong>琉璃智慧梟</strong></div>
+              <div>• Gen 2 子代：<strong>量子共感貓</strong></div>
+              <div>• Gen 3 傳奇：<strong>星雲聖靈·智慧之翼</strong></div>
+            </div>
+          </div>
+          <div class="p-2.5 bg-white rounded-xl text-[11px] text-zen-muted font-mono border border-zen-borderLight">
+            累計飲水：420,000 ml · 國考專注：620 小時
+          </div>
+        </div>
+
+        <!-- 5. Marcus -->
+        <div class="p-4 rounded-2xl bg-zen-surface border border-zen-border flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-sm font-bold text-zen-pine">🎨 Marcus (居家設計)</span>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-purple-50 text-purple-800 border border-purple-200">防坐肌力</span>
+            </div>
+            <div class="text-xs text-zen-body space-y-1 mb-3">
+              <div>• 核心壓力：每 50m 離座肌力伸展、夜間靈感速寫</div>
+              <div>• Gen 1 成年：<strong>霓虹聲波熊貓</strong></div>
+              <div>• Gen 2 子代：<strong>深空星海魟魚</strong></div>
+              <div>• Gen 3 傳奇：<strong>極光好夢雲·造夢師</strong></div>
+            </div>
+          </div>
+          <div class="p-2.5 bg-white rounded-xl text-[11px] text-zen-muted font-mono border border-zen-borderLight">
+            離座提醒：1,420 次 · 創作陪伴：180 天
+          </div>
+        </div>
+
+      </div>
+
+      <div class="mt-6 p-4 rounded-2xl bg-brand-50 border border-brand-200 text-xs text-brand-900 flex items-center gap-3">
+        <span class="text-xl flex-shrink-0">💡</span>
+        <div>
+          <strong class="font-bold">產品核心護城河（寧靜科技 × 長期養成）：</strong>
+          使用者完全不需要手動填寫複雜表格，只要把 PetPal 放在桌面上摸一下打卡、跑番茄鐘、喝水離座，硬體感測器便自動將日常習慣淬鍊為獨一無二的數位生命資產。
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ==================== 5. JAVASCRIPT LOGIC ==================== -->
+  <script>
+    // --- PROCEDURAL DAILY MULTI-HABIT GENERATOR (5 PERSONAS × 180 DAYS) ---
+    function generateDailyLogs(personaKey) {
+      const logs = [];
+      const weekdays = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"];
+
+      for (let day = 1; day <= 180; day++) {
+        const weekday = weekdays[(day + 1) % 7];
+        let entry = { day: day, weekday: weekday };
+
+        if (personaKey === 'alex') {
+          // Alex: Night owl engineer rotating between code sprint, fitness, reading & outdoor
+          const cycle = day % 4;
+          if (cycle === 1) {
+            entry.headline = "深夜心流代碼衝刺日";
+            entry.habits = [
+              { icon: "💧", label: "喝水", val: "2,100 ml", tag: "cyan" },
+              { icon: "🎯", label: "專注寫Code", val: "5 輪 (125m)", tag: "teal" },
+              { icon: "🏋️", label: "啞鈴肌力", val: "35 min", tag: "amber" },
+              { icon: "🌙", label: "夜貓就寢", val: "02:40", tag: "indigo" }
+            ];
+            entry.healthMetrics = "心率靜息 64 bpm · IMU 步數 4,820 · 番茄鐘無中斷率 96%";
+          } else if (cycle === 2) {
+            entry.headline = "校園散步與文獻研讀日";
+            entry.habits = [
+              { icon: "💧", label: "定時補水", val: "1,850 ml", tag: "cyan" },
+              { icon: "🏃‍♂️", label: "校園散步", val: "7,400 步", tag: "emerald" },
+              { icon: "📖", label: "論文閱讀", val: "50 min", tag: "purple" },
+              { icon: "🎯", label: "研究心流", val: "4 輪 (100m)", tag: "teal" },
+              { icon: "🐾", label: "摸摸打卡", val: "5 次", tag: "rose" }
+            ];
+            entry.healthMetrics = "心率靜息 61 bpm · IMU 步數 7,400 · 離座休息 4 次";
+          } else if (cycle === 3) {
+            entry.headline = "重訓健身與深度專注日";
+            entry.habits = [
+              { icon: "💧", label: "補水達標", val: "2,400 ml", tag: "cyan" },
+              { icon: "🏋️", label: "健身房重訓", val: "50 min", tag: "amber" },
+              { icon: "🎯", label: "極限番茄鐘", val: "6 輪 (150m)", tag: "teal" },
+              { icon: "🌙", label: "夜貓就寢", val: "02:15", tag: "indigo" }
+            ];
+            entry.healthMetrics = "熱量消耗 2,150 kcal · IMU 步數 5,600 · 專注完成 6 輪";
+          } else {
+            entry.headline = "戶外大步數與開源研讀日";
+            entry.habits = [
+              { icon: "💧", label: "充足補水", val: "2,200 ml", tag: "cyan" },
+              { icon: "🏃‍♂️", label: "戶外散步", val: "9,600 步", tag: "emerald" },
+              { icon: "🏋️", label: "核心訓練", val: "30 min", tag: "amber" },
+              { icon: "📖", label: "開源研讀", val: "45 min", tag: "purple" }
+            ];
+            entry.healthMetrics = "心率靜息 59 bpm · IMU 步數 9,600 · 活躍時長 65 min";
+          }
+
+          if (day === 1) entry.specialBadge = "🌟 [Day 1 領養始祖 Mochi]";
+          else if (day === 30) entry.specialBadge = "⭐ [Day 30 成年禮！確立『午夜深思渡鴉』]";
+          else if (day === 90) entry.specialBadge = "🐣 [Day 90 孵化第 2 代『賽博機械隼』]";
+          else if (day === 180) entry.specialBadge = "⏳ [Day 180 解鎖第 3 代『時空旅行者·克羅諾斯』]";
+
+        } else if (personaKey === 'emma') {
+          // Emma: Early bird marketing student
+          const cycle = day % 4;
+          if (cycle === 1) {
+            entry.headline = "破曉晨讀與慢跑平衡日";
+            entry.habits = [
+              { icon: "☀️", label: "晨起溫水", val: "450 ml", tag: "cyan" },
+              { icon: "📖", label: "晨讀商管個案", val: "40 min", tag: "purple" },
+              { icon: "🏃‍♂️", label: "校園慢跑", val: "8,600 步", tag: "emerald" },
+              { icon: "💧", label: "全日補水", val: "2,100 ml", tag: "cyan" },
+              { icon: "🌙", label: "準時早睡", val: "22:45", tag: "indigo" }
+            ];
+            entry.healthMetrics = "晨起時間 06:15 · 靜息心率 56 bpm · 睡眠品質 94 分";
+          } else if (cycle === 2) {
+            entry.headline = "健身瑜珈與戶外活力日";
+            entry.habits = [
+              { icon: "☀️", label: "晨間補水", val: "500 ml", tag: "cyan" },
+              { icon: "🏋️", label: "皮拉提斯瑜珈", val: "45 min", tag: "amber" },
+              { icon: "🏃‍♂️", label: "校園散步", val: "7,800 步", tag: "emerald" },
+              { icon: "📖", label: "行銷書籍", val: "35 min", tag: "purple" },
+              { icon: "🌙", label: "規律早睡", val: "22:50", tag: "indigo" }
+            ];
+            entry.healthMetrics = "晨起時間 06:22 · 運動消耗 320 kcal · 補水達標 100%";
+          } else if (cycle === 3) {
+            entry.headline = "專案番茄鐘與肌力健身日";
+            entry.habits = [
+              { icon: "☀️", label: "晨露溫水", val: "400 ml", tag: "cyan" },
+              { icon: "🎯", label: "專案番茄鐘", val: "4 輪 (100m)", tag: "teal" },
+              { icon: "🏋️", label: "肌力伸展", val: "40 min", tag: "amber" },
+              { icon: "💧", label: "定時喝水", val: "2,500 ml", tag: "cyan" }
+            ];
+            entry.healthMetrics = "晨起時間 06:10 · 深度專注 100 min · 靜息心率 55 bpm";
+          } else {
+            entry.headline = "戶外大步數漫步與研討日";
+            entry.habits = [
+              { icon: "☀️", label: "晨起補水", val: "450 ml", tag: "cyan" },
+              { icon: "🏃‍♂️", label: "戶外大散步", val: "12,400 步", tag: "emerald" },
+              { icon: "📖", label: "深度閱讀研討", val: "1 小時", tag: "purple" },
+              { icon: "🐾", label: "伴睡夜燈打卡", val: "點亮 45m", tag: "rose" }
+            ];
+            entry.healthMetrics = "晨起時間 06:18 · IMU 步數 12,400 · 戶外日照 85 min";
+          }
+
+          if (day === 1) entry.specialBadge = "🌟 [Day 1 領養始祖 Mochi 放於床頭]";
+          else if (day === 30) entry.specialBadge = "⭐ [Day 30 破曉達成！確立『曦光守護者』]";
+          else if (day === 90) entry.specialBadge = "🐣 [Day 90 晨曦飽和！孵化第 2 代『深林小樹熊』]";
+          else if (day === 180) entry.specialBadge = "✨ [Day 180 百日自律！解鎖第 3 代『星芒療癒使』]";
+
+        } else if (personaKey === 'john') {
+          // John: High-stress marketing director, 10,000 steps decompression & breathing
+          const cycle = day % 4;
+          if (cycle === 1) {
+            entry.headline = "午間快走萬步與深呼吸減壓日";
+            entry.habits = [
+              { icon: "💧", label: "辦公補水", val: "2,300 ml", tag: "cyan" },
+              { icon: "🏃‍♂️", label: "午間綠道快走", val: "10,500 步", tag: "emerald" },
+              { icon: "🧘", label: "深呼吸離座", val: "4 次 (20m)", tag: "teal" },
+              { icon: "🐾", label: "摸摸打卡減壓", val: "8 次", tag: "rose" }
+            ];
+            entry.healthMetrics = "靜息心率 58 bpm · 壓力指數從 82 降至 41 · 步數破萬";
+          } else if (cycle === 2) {
+            entry.headline = "健身房慢跑與伸展放鬆日";
+            entry.habits = [
+              { icon: "💧", label: "運動喝水", val: "2,600 ml", tag: "cyan" },
+              { icon: "🏋️", label: "慢跑有氧", val: "45 min", tag: "amber" },
+              { icon: "🏃‍♂️", label: "全日步數", val: "12,200 步", tag: "emerald" },
+              { icon: "🌙", label: "早睡調養", val: "23:00", tag: "indigo" }
+            ];
+            entry.healthMetrics = "卡路里消耗 650 kcal · 深度睡眠 2.4h · 離座達標";
+          } else if (cycle === 3) {
+            entry.headline = "高壓會議心流與步數調節日";
+            entry.habits = [
+              { icon: "🎯", label: "策略專注", val: "4 輪 (100m)", tag: "teal" },
+              { icon: "💧", label: "會議補水", val: "2,000 ml", tag: "cyan" },
+              { icon: "🏃‍♂️", label: "夜間健走", val: "9,200 步", tag: "emerald" },
+              { icon: "🐾", label: "摸摸互動", val: "6 次", tag: "rose" }
+            ];
+            entry.healthMetrics = "心率平穩 · 番茄鐘無中斷完成 · 站立時數 11 小時";
+          } else {
+            entry.headline = "週末戶外登山健行日";
+            entry.habits = [
+              { icon: "🏃‍♂️", label: "山林健行", val: "16,800 步", tag: "emerald" },
+              { icon: "💧", label: "充足補水", val: "2,800 ml", tag: "cyan" },
+              { icon: "🏋️", label: "戶外拉筋", val: "30 min", tag: "amber" },
+              { icon: "📖", label: "自然沉浸閱讀", val: "40 min", tag: "purple" }
+            ];
+            entry.healthMetrics = "步數突破 16,800 · 戶外自然暴露 180 min · 活力飽滿";
+          }
+
+          if (day === 1) entry.specialBadge = "🌟 [Day 1 領養始祖 Mochi 置於辦公桌]";
+          else if (day === 30) entry.specialBadge = "⭐ [Day 30 萬步減壓達成！確立『雲瀑漫步狐』]";
+          else if (day === 90) entry.specialBadge = "🐣 [Day 90 山林氣息浸潤！孵化第 2 代『荒野踏風羚』]";
+          else if (day === 180) entry.specialBadge = "🏔️ [Day 180 身心極致平衡！解鎖第 3 代『遠峰守護靈』]";
+
+        } else if (personaKey === 'chloe') {
+          // Chloe: Medical school senior studying for board exams
+          const cycle = day % 4;
+          if (cycle === 1) {
+            entry.headline = "厚重文獻複習與定時大補水日";
+            entry.habits = [
+              { icon: "💧", label: "大容量喝水", val: "2,800 ml", tag: "cyan" },
+              { icon: "🎯", label: "國考番茄鐘", val: "6 輪 (150m)", tag: "teal" },
+              { icon: "📖", label: "病理文獻研讀", val: "2 小時", tag: "purple" },
+              { icon: "🧘", label: "眼部閉目放鬆", val: "6 次 (30m)", tag: "rose" }
+            ];
+            entry.healthMetrics = "定時喝水達成率 100% · 專注深度 150m · 護眼休息 6 次";
+          } else if (cycle === 2) {
+            entry.headline = "圖書館醫學自習與桌前伸展日";
+            entry.habits = [
+              { icon: "💧", label: "充足飲水", val: "2,600 ml", tag: "cyan" },
+              { icon: "🎯", label: "藥理刷題專注", val: "5 輪 (125m)", tag: "teal" },
+              { icon: "🏋️", label: "桌前頸椎伸展", val: "30 min", tag: "amber" },
+              { icon: "🏃‍♂️", label: "餐後散步", val: "6,500 步", tag: "emerald" }
+            ];
+            entry.healthMetrics = "久坐主動離座 5 次 · 專注完成率 98% · 補水達標";
+          } else if (cycle === 3) {
+            entry.headline = "生理時鐘規律與臨床筆記日";
+            entry.habits = [
+              { icon: "💧", label: "定時飲水", val: "2,700 ml", tag: "cyan" },
+              { icon: "📖", label: "臨床醫案整理", val: "90 min", tag: "purple" },
+              { icon: "🎯", label: "高強度心流", val: "4 輪 (100m)", tag: "teal" },
+              { icon: "🌙", label: "嚴格規律就寢", val: "23:15", tag: "indigo" }
+            ];
+            entry.healthMetrics = "規律生理時鐘建立 · 深睡達 2.6 小時 · 精神專注";
+          } else {
+            entry.headline = "校園慢走與跨科統合日";
+            entry.habits = [
+              { icon: "💧", label: "補水達標", val: "2,500 ml", tag: "cyan" },
+              { icon: "🏃‍♂️", label: "校園綠蔭散步", val: "8,500 步", tag: "emerald" },
+              { icon: "📖", label: "醫學期刊閱讀", val: "1 小時", tag: "purple" },
+              { icon: "🐾", label: "摸摸舒壓", val: "5 次", tag: "rose" }
+            ];
+            entry.healthMetrics = "IMU 步數 8,500 · 血液循環良好 · 身心放鬆穩定";
+          }
+
+          if (day === 1) entry.specialBadge = "🌟 [Day 1 領養始祖 Mochi 放於書架]";
+          else if (day === 30) entry.specialBadge = "⭐ [Day 30 智慧初顯！確立『琉璃智慧梟』]";
+          else if (day === 90) entry.specialBadge = "🐣 [Day 90 澄澈心流凝結！孵化第 2 代『晶石共感精靈』]";
+          else if (day === 180) entry.specialBadge = "🕊️ [Day 180 醫考完賽加冕！解鎖第 3 代『聖靈啟蒙者』]";
+
+        } else {
+          // Marcus: Freelance UI/UX designer, sedentary break & creative fitness
+          const cycle = day % 4;
+          if (cycle === 1) {
+            entry.headline = "防久坐定時拉筋與設計衝刺日";
+            entry.habits = [
+              { icon: "💧", label: "桌前溫水", val: "2,200 ml", tag: "cyan" },
+              { icon: "🎯", label: "UI 設計專注", val: "5 輪 (125m)", tag: "teal" },
+              { icon: "🏋️", label: "徒手深蹲拉筋", val: "30 min", tag: "amber" },
+              { icon: "🐾", label: "離座摸摸", val: "7 次", tag: "rose" }
+            ];
+            entry.healthMetrics = "每 50 分鐘防久坐離座提醒 100% 執行 · 脊椎無負擔";
+          } else if (cycle === 2) {
+            entry.headline = "啞鈴肌力健身與深夜靈感日";
+            entry.habits = [
+              { icon: "💧", label: "充足飲水", val: "2,400 ml", tag: "cyan" },
+              { icon: "🏋️", label: "居家啞鈴重訓", val: "45 min", tag: "amber" },
+              { icon: "📖", label: "設計年鑑閱讀", val: "50 min", tag: "purple" },
+              { icon: "🌙", label: "靈感就寢", val: "01:30", tag: "indigo" }
+            ];
+            entry.healthMetrics = "肌力訓練消耗 340 kcal · 深度靈感沉浸 · 體能回升";
+          } else if (cycle === 3) {
+            entry.headline = "戶外咖啡館漫步與介面調試日";
+            entry.habits = [
+              { icon: "🏃‍♂️", label: "城市漫步散步", val: "8,900 步", tag: "emerald" },
+              { icon: "💧", label: "定時喝水", val: "2,100 ml", tag: "cyan" },
+              { icon: "🎯", label: "Prototype 專注", val: "4 輪 (100m)", tag: "teal" },
+              { icon: "🐾", label: "摸摸放鬆", val: "6 次", tag: "rose" }
+            ];
+            entry.healthMetrics = "步數近 9,000 · 心率平穩 · 靈感流暢迸發";
+          } else {
+            entry.headline = "居家核心運動與全天自律日";
+            entry.habits = [
+              { icon: "💧", label: "補水達標", val: "2,300 ml", tag: "cyan" },
+              { icon: "🏋️", label: "瑜珈墊核心運動", val: "40 min", tag: "amber" },
+              { icon: "🏃‍♂️", label: "午後散步", val: "7,500 步", tag: "emerald" },
+              { icon: "📖", label: "美學書籍研讀", val: "45 min", tag: "purple" }
+            ];
+            entry.healthMetrics = "全天離座 8 次 · 體態平衡 · 自律評分 96 分";
+          }
+
+          if (day === 1) entry.specialBadge = "🌟 [Day 1 領養始祖 Mochi 放於筆電旁]";
+          else if (day === 30) entry.specialBadge = "⭐ [Day 30 靈動敏捷達成！確立『暮色幻影豹』]";
+          else if (day === 90) entry.specialBadge = "🐣 [Day 90 靈感激盪！孵化第 2 代『靈感潮汐鯨』]";
+          else if (day === 180) entry.specialBadge = "🌌 [Day 180 自由創作大成！解鎖第 3 代『幻境造夢師』]";
+        }
+
+        logs.push(entry);
+      }
+      return logs;
+    }
+
+    // --- 5 PERSONAS DATA DEFINITIONS ---
+    const PERSONAS = {
+      alex: {
+        id: "alex",
+        name: "Alex 的生活軌跡（臺科大資工研究生）",
+        role: "資工所碩一 · 午夜心流型",
+        avatar: "💻",
+        theme: "cyan",
+        desc: "白天上課做研究，深夜 23:00~03:00 專注寫論文與 Code。手機習慣收進抽屜，每天使用 PetPal 裝置完成 4~6 輪深度番茄鐘。他的生活環境壓力是：<strong>極高專注、熬夜研究、低社交、定時補水</strong>。",
+        habitLogs: generateDailyLogs('alex'),
+        treeNodes: [
+          {
+            id: "alex_gen1_baby",
+            gen: 1,
+            dayUnlocked: 1,
+            name: "Mochi 初始幼體",
+            title: "原型起點",
+            speciesId: 0,
+            avatar: "🐣",
+            petImage: "assets/images/pets/sprout_bear.png",
+            auraColor: "#10b981",
+            screenAura: "白色初始光環 · 沉靜啟程",
+            screenName: "Mochi 幼體",
+            stage: "幼體 (Baby)",
+            status: "歷史典藏",
+            traits: [45, 50, 50, 30, 40, 55],
+            stats: { focusHours: "12.5 h", circadian: "-15 (微夜貓)", steps: "24,000 步", touch: "45 次" },
+            inheritance: { rate: 100, parent: "初始硬體開箱配對生成", text: "開箱時由裝置序號隨機生成之白色原型基因，作為全家族的起點。", beta: "1.00×", entropy: "2.45 bit" },
+            diary: "今天主人剛把我從盒子拿出來，在桌前輕輕摸了摸我的頭。屋裡很安靜，時鐘滴答滴答走著。看著你寫下一條又一條的程式碼，我也跟著安心地打了個哈欠。我們會一起成長的，對吧？"
+          },
+          {
+            id: "alex_gen1_adult",
+            candidateId: "cyber_raven",
+            gen: 1,
+            dayUnlocked: 30,
+            name: "午夜深思渡鴉",
+            title: "心流極客",
+            speciesId: 2,
+            avatar: "🦅",
+            petImage: "assets/images/pets/cyber_raven.png",
+            auraColor: "#14a888",
+            screenAura: "冷幽心流光環 · 專注 92%",
+            screenName: "深思渡鴉",
+            stage: "成年 (Adult)",
+            status: "已成年確立",
+            traits: [30, 92, 15, 20, 65, 55],
+            stats: { focusHours: "148.5 h", circadian: "-42 (深研夜貓)", steps: "182,400 步", touch: "342 次" },
+            inheritance: { rate: 82, parent: "Mochi 幼體", text: "因為主人 Alex 連續 30 天在深夜進行高強度番茄鐘，環境壓力打破了初始幼體的平衡，基因向專注耐受度極度漂移。頭部突變出賽博微型目鏡，身體羽毛轉化為冷幽青黑。", beta: "1.46×", entropy: "1.82 bit" },
+            diary: "午夜 02:15，房間只有螢幕的微光。主人剛敲完最後一行程式碼，深深吐了一口氣。我看見你眼裡的疲憊，但也看見了完成專注時的滿足。我的賽博目鏡亮起藍光，今晚，我們又一起走過了一段了不起的路。"
+          },
+          {
+            id: "alex_gen2",
+            candidateId: "byte_alien",
+            gen: 2,
+            dayUnlocked: 90,
+            name: "賽博機械隼",
+            title: "第二代結晶",
+            speciesId: 2,
+            avatar: "⚡",
+            petImage: "assets/images/pets/byte_alien.png",
+            auraColor: "#0ea5e9",
+            screenAura: "全息目鏡光環 · 專注 96%",
+            screenName: "機械隼",
+            stage: "完全體 (Mature)",
+            status: "子代活躍中",
+            traits: [35, 96, 10, 25, 75, 50],
+            stats: { focusHours: "310.0 h", circadian: "-48 (極限夜貓)", steps: "390,000 步", touch: "680 次" },
+            inheritance: { rate: 85, parent: "午夜深思渡鴉 (Gen 1)", text: "第 90 天由第一代渡鴉孕育之結晶。完美繼承父代高專注基因，眼部進化為全息 HUD 瞄準鏡，專注耐受度達到極致 96%。", beta: "1.68×", entropy: "1.65 bit" },
+            diary: "我是第二代機械隼。從我睜開眼的那一天起，耳邊就是規律的機械鍵盤聲。我繼承了父親冷靜的羽翼，也繼承了你對解決複雜問題的執著。當你沉浸在心流時，整個世界都在為你讓路。"
+          },
+          {
+            id: "alex_gen3",
+            candidateId: "starlight_bot",
+            gen: 3,
+            dayUnlocked: 180,
+            name: "時空旅行者·克羅諾斯",
+            title: "第三代究極體",
+            speciesId: 5,
+            avatar: "⏳",
+            petImage: "assets/images/pets/starlight_bot.png",
+            auraColor: "#f59e0b",
+            screenAura: "永恆發條金芒 · 專注 98%",
+            screenName: "克羅諾斯",
+            stage: "傳奇 (Legend)",
+            status: "百日無瑕解鎖",
+            traits: [60, 98, 40, 45, 90, 85],
+            stats: { focusHours: "580.0 h", circadian: "-20 (趨於平衡)", steps: "980,000 步", touch: "1,240 次" },
+            inheritance: { rate: 70, parent: "賽博機械隼 (Gen 2)", text: "Alex 連續自律達 180 天所孕育出的究極生命體。體內齒輪與時鐘核心永恆運轉，象徵生活自律已徹底內化為時間的主人。", beta: "2.12×", entropy: "1.40 bit" },
+            diary: "第 180 天。自律不再是一場抵抗誘惑的苦修，而是雕刻在你骨髓裡的節奏。我身上的時鐘發條緩緩轉動，這座百日紀念碑，屬於你，也屬於這半年來從未放棄的每一個深夜。"
+          }
+        ]
+      },
+
+      emma: {
+        id: "emma",
+        name: "Emma 的生活軌跡（臺大商研所碩士生）",
+        role: "商研所碩一 · 破曉自律型",
+        avatar: "☀️",
+        theme: "gold",
+        desc: "注重生活儀式感與身心平衡。每日清晨 06:15 起床喝溫水、晨讀半小時，午後定時戶外快走萬步，晚上 23:00 前準時就寢。她的生活環境壓力是：<strong>破曉早起、規律作息、高步數自然探索</strong>。",
+        habitLogs: generateDailyLogs('emma'),
+        treeNodes: [
+          {
+            id: "emma_gen1_baby",
+            gen: 1,
+            dayUnlocked: 1,
+            name: "Mochi 初始幼體",
+            title: "原型起點",
+            speciesId: 0,
+            avatar: "🐣",
+            petImage: "assets/images/pets/dream_cloud.png",
+            auraColor: "#a855f7",
+            screenAura: "破曉晨曦原型 · 晨鳥出發",
+            screenName: "Mochi 幼體",
+            stage: "幼體 (Baby)",
+            status: "歷史典藏",
+            traits: [45, 50, 50, 30, 40, 55],
+            stats: { focusHours: "8.0 h", circadian: "+10 (微晨鳥)", steps: "35,000 步", touch: "60 次" },
+            inheritance: { rate: 100, parent: "初始硬體開箱配對生成", text: "白色初始體，準備隨 Emma 的晨型習慣展開演化之旅。", beta: "1.00×", entropy: "2.45 bit" },
+            diary: "清晨第一道陽光灑進房間時，Emma 輕輕摸了我一下。溫熱的水氣升起，美好的一天開始了。"
+          },
+          {
+            id: "emma_gen1_adult",
+            candidateId: "nebula_spriteling",
+            gen: 1,
+            dayUnlocked: 30,
+            name: "曦光守護者",
+            title: "破曉之約",
+            speciesId: 1,
+            avatar: "☀️",
+            petImage: "assets/images/pets/nebula_spriteling.png",
+            auraColor: "#06b6d4",
+            screenAura: "晨露金燦光環 · 作息 +48",
+            screenName: "曦光精靈",
+            stage: "成年 (Adult)",
+            status: "已成年確立",
+            traits: [65, 60, 95, 40, 55, 88],
+            stats: { focusHours: "84.0 h", circadian: "+48 (極致晨型)", steps: "310,000 步", touch: "420 次" },
+            inheritance: { rate: 80, parent: "Mochi 幼體", text: "因為 Emma 連續 30 天於清晨 06:30 前完成晨起打卡與喝水，環境壓力將其基因塑造成『曦光守護者』。頭戴晨露光環，待機時散發暖金微光。", beta: "1.44×", entropy: "1.79 bit" },
+            diary: "清晨 06:18，當第一縷曦光照進房間時，你已經倒好了溫水。早起很難，但看見你又一次戰勝了被窩，我頭頂的光環微閃出金燦色的粒子。主人，今天的你也在發光呢。"
+          },
+          {
+            id: "emma_gen2",
+            candidateId: "sprout_bear",
+            gen: 2,
+            dayUnlocked: 90,
+            name: "深林小樹熊",
+            title: "第二代結晶",
+            speciesId: 3,
+            avatar: "🐻",
+            petImage: "assets/images/pets/sprout_bear.png",
+            auraColor: "#10b981",
+            screenAura: "治癒萌芽綠光 · 校園萬步",
+            screenName: "深林樹熊",
+            stage: "完全體 (Mature)",
+            status: "子代活躍中",
+            traits: [88, 50, 85, 55, 90, 80],
+            stats: { focusHours: "165.0 h", circadian: "+45 (晨型散步)", steps: "820,000 步", touch: "860 次" },
+            inheritance: { rate: 78, parent: "曦光守護者 (Gen 1)", text: "第 90 天由第一代曦光守護者孵化。繼承晨起作息基因，更因 Emma 每日堅持在校園林蔭大道快走萬步，身上的種子萌發為小樹芽與治癒蘑菇。", beta: "1.65×", entropy: "1.72 bit" },
+            diary: "今天在公園散步時微風吹過，我頭頂上的嫩芽也跟著搖搖晃晃。深呼吸，看著你充滿活力的步伐，緩慢而規律的生活，真是世界上最舒服的事。"
+          },
+          {
+            id: "emma_gen3",
+            candidateId: "zen_pebble",
+            gen: 3,
+            dayUnlocked: 180,
+            name: "星芒療癒使",
+            title: "第三代究極體",
+            speciesId: 1,
+            avatar: "✨",
+            petImage: "assets/images/pets/zen_pebble.png",
+            auraColor: "#64748b",
+            screenAura: "沉靜守護星芒 · 終身晨型",
+            screenName: "星芒療癒使",
+            stage: "傳奇 (Legend)",
+            status: "自律典範",
+            traits: [82, 70, 92, 75, 85, 95],
+            stats: { focusHours: "280.0 h", circadian: "+46 (終身晨型)", steps: "1,650,000 步", touch: "1,520 次" },
+            inheritance: { rate: 75, parent: "深林小樹熊 (Gen 2)", text: "連續自律 180 天，在獲得實體自律紀念明信片的那一天孵化。具備最高等級的沉靜共感與晨光守護力。", beta: "2.08×", entropy: "1.45 bit" },
+            diary: "半年過去了，桌上的水杯依然每天準時盛滿清晨的微光。陪伴你成長的這 180 天，是我靈魂裡最美的風景。"
+          }
+        ]
+      },
+
+      john: {
+        id: "john",
+        name: "John 的生活軌跡（外商行銷主管）",
+        role: "外商主管 · 萬步減壓型",
+        avatar: "🏃",
+        theme: "emerald",
+        desc: "平日被跨國會議與專案進度包夾，容易感到身心緊繃。他靠 PetPal 放在辦公桌上的「離座深呼吸提醒」與「午休萬步快走」減壓，週末熱愛走入山林健行。生活環境壓力：<strong>萬步散步、高頻觸控摸摸減壓、戶外自然調節、呼吸放鬆</strong>。",
+        habitLogs: generateDailyLogs('john'),
+        treeNodes: [
+          {
+            id: "john_gen1_baby",
+            gen: 1,
+            dayUnlocked: 1,
+            name: "Mochi 初始幼體",
+            title: "原型起點",
+            speciesId: 0,
+            avatar: "🐣",
+            petImage: "assets/images/pets/sprout_bear.png",
+            auraColor: "#10b981",
+            screenAura: "白色原型光環 · 萬步起點",
+            screenName: "Mochi 幼體",
+            stage: "幼體 (Baby)",
+            status: "歷史典藏",
+            traits: [45, 50, 50, 30, 40, 55],
+            stats: { focusHours: "10.0 h", circadian: "0 (規律均衡)", steps: "38,000 步", touch: "75 次" },
+            inheritance: { rate: 100, parent: "初始硬體開箱配對生成", text: "白色初始體，準備隨 John 的萬步減壓之旅展開演化。", beta: "1.00×", entropy: "2.45 bit" },
+            diary: "今天主人在結束了一場很長的跨國會議後，把剛開箱的我放在辦公桌邊。你輕輕嘆了一口氣，摸了摸我的頭。別擔心，以後每個喘不過氣的時刻，我都在這裡陪著你。"
+          },
+          {
+            id: "john_gen1_adult",
+            candidateId: "byte_fox",
+            gen: 1,
+            dayUnlocked: 30,
+            name: "靈動位元狐",
+            title: "雲瀑漫步",
+            speciesId: 3,
+            avatar: "🦊",
+            petImage: "assets/images/pets/byte_fox.png",
+            auraColor: "#f59e0b",
+            screenAura: "流雲漫步光環 · 日均 1.2 萬步",
+            screenName: "位元狐",
+            stage: "成年 (Adult)",
+            status: "已成年確立",
+            traits: [88, 55, 60, 50, 65, 82],
+            stats: { focusHours: "75.0 h", circadian: "+15 (活力均衡)", steps: "360,000 步", touch: "520 次" },
+            inheritance: { rate: 82, parent: "Mochi 幼體", text: "連續 30 天日均步數突破 12,000 步，高步數與戶外自然暴露促使初始基因演化為『靈動位元狐』。身後拖著一抹流雲般的橙金長尾，腳步輕盈靈動。", beta: "1.48×", entropy: "1.75 bit" },
+            diary: "中午陽光正好，你帶我到河濱綠道散步。看著你原本微皺的眉頭慢慢舒展開來，我的雲霧尾巴也歡快地搖晃著。走吧走吧，每一步都是為自己活著的證明。"
+          },
+          {
+            id: "john_gen2",
+            candidateId: "magma_golem",
+            gen: 2,
+            dayUnlocked: 90,
+            name: "熔岩鋼鐵巨靈",
+            title: "第二代結晶",
+            speciesId: 3,
+            avatar: "🌋",
+            petImage: "assets/images/pets/magma_golem.png",
+            auraColor: "#ef4444",
+            screenAura: "大地耐力火環 · 山林健行",
+            screenName: "熔岩巨靈",
+            stage: "完全體 (Mature)",
+            status: "子代活躍中",
+            traits: [95, 60, 65, 55, 78, 88],
+            stats: { focusHours: "180.0 h", circadian: "+25 (山林節奏)", steps: "1,120,000 步", touch: "1,100 次" },
+            inheritance: { rate: 80, parent: "靈動位元狐 (Gen 1)", text: "第 90 天由位元狐結晶孵化。因 John 週末持續進行山林古道高強度健行，體魄轉化為熔岩與磐石護甲，生命活力與耐力躍居頂峰。", beta: "1.72×", entropy: "1.62 bit" },
+            diary: "爬上山頂的那一刻，微風吹過山谷。你深吸了一大口清新的空氣，所有的業績指標與壓力在這一刻都被拋在腦後。我體內的岩漿脈絡，也吸收了整座大地的恆毅力呢。"
+          },
+          {
+            id: "john_gen3",
+            candidateId: "zen_pebble",
+            gen: 3,
+            dayUnlocked: 180,
+            name: "遠峰守護靈·禪意大地",
+            title: "第三代究極體",
+            speciesId: 5,
+            avatar: "🏔️",
+            petImage: "assets/images/pets/zen_pebble.png",
+            auraColor: "#64748b",
+            screenAura: "遠峰沉靜巨石 · 200 萬步",
+            screenName: "禪意大地靈",
+            stage: "傳奇 (Legend)",
+            status: "身心平衡典範",
+            traits: [98, 70, 75, 60, 85, 96],
+            stats: { focusHours: "360.0 h", circadian: "+30 (自然天人合一)", steps: "2,100,000 步", touch: "1,800 次" },
+            inheritance: { rate: 76, parent: "熔岩鋼鐵巨靈 (Gen 2)", text: "累積步數突破 200 萬步，自律達 180 天孵化之究極神祇。沉著如遠峰青石，撫平一切現代焦慮，是身心健康與戶外活力的極致象徵。", beta: "2.10×", entropy: "1.38 bit" },
+            diary: "半年，200 萬步。我們一起走過了城市喧囂，也穿過了無數座蔥鬱的山嶺。你不再是那個被日程追著跑的疲憊經理，而是自己身體與節奏的主宰。這座大地之碑，敬你的每一步堅持。"
+          }
+        ]
+      },
+
+      chloe: {
+        id: "chloe",
+        name: "Chloe 的生活軌跡（醫學系大四生）",
+        role: "醫學大四 · 國考專注型",
+        avatar: "📚",
+        theme: "teal",
+        desc: "面對厚重的國考醫學文獻與藥理知識，需要極端規律的自律節律。她嚴格以 PetPal 進行 45 分鐘專注衝刺、每日定時大容量飲水（2,500ml+）與定時閉目眼部放鬆。生活環境壓力：<strong>長時密集研讀、極高飲水量、固定作息、眼部放鬆</strong>。",
+        habitLogs: generateDailyLogs('chloe'),
+        treeNodes: [
+          {
+            id: "chloe_gen1_baby",
+            gen: 1,
+            dayUnlocked: 1,
+            name: "Mochi 水藍初始幼體",
+            title: "原型起點",
+            speciesId: 0,
+            avatar: "💧",
+            petImage: "assets/images/pets/mochi_aqua.png",
+            auraColor: "#06b6d4",
+            screenAura: "水藍原型光環 · 醫考出發",
+            screenName: "Mochi 幼體",
+            stage: "幼體 (Baby)",
+            status: "歷史典藏",
+            traits: [45, 50, 50, 30, 40, 55],
+            stats: { focusHours: "15.0 h", circadian: "+5 (微晨型)", steps: "28,000 步", touch: "50 次" },
+            inheritance: { rate: 100, parent: "初始硬體開箱配對生成", text: "水藍透明初始體，準備隨 Chloe 的嚴謹醫考自修展開演化。", beta: "1.00×", entropy: "2.45 bit" },
+            diary: "厚重的神經解剖學課本壓在桌上。Chloe 撕開膠膜，把我擺在一杯冒著熱氣的保溫杯旁。你說接下來的日子會很辛苦，但有了我，每一次倒數都有了伴。"
+          },
+          {
+            id: "chloe_gen1_adult",
+            candidateId: "crystal_owl",
+            gen: 1,
+            dayUnlocked: 30,
+            name: "琉璃智慧梟",
+            title: "澄澈心流",
+            speciesId: 2,
+            avatar: "🦉",
+            petImage: "assets/images/pets/crystal_owl.png",
+            auraColor: "#14a888",
+            screenAura: "澄澈琉璃心流 · 每日 2500ml 補水",
+            screenName: "琉璃智慧梟",
+            stage: "成年 (Adult)",
+            status: "已成年確立",
+            traits: [40, 90, 60, 35, 95, 78],
+            stats: { focusHours: "135.0 h", circadian: "+20 (規律作息)", steps: "195,000 步", touch: "380 次" },
+            inheritance: { rate: 84, parent: "Mochi 幼體", text: "連續 30 天嚴格執行 45 分鐘醫學專注輪次與每日 2,500ml 定時補水，初始體受環境壓力激發，演化為『琉璃智慧梟』。雙眼如琉璃澄澈，記憶與專注耐受度極高，頭頂浮現醫神信標。", beta: "1.45×", entropy: "1.78 bit" },
+            diary: "深夜圖書館的自修室裡，一頁一頁翻書的聲音是世界上最專注的交響樂。我看見你精準地背下每一種藥理機轉，我胸前的琉璃晶石發出澄靜微光。智慧與仁心，正在你身上靜靜發芽。"
+          },
+          {
+            id: "chloe_gen2",
+            candidateId: "quantum_kitty",
+            gen: 2,
+            dayUnlocked: 90,
+            name: "量子共感精靈",
+            title: "第二代結晶",
+            speciesId: 4,
+            avatar: "🐱",
+            petImage: "assets/images/pets/quantum_kitty.png",
+            auraColor: "#8b5cf6",
+            screenAura: "量子多維晶光 · 專注 94%",
+            screenName: "量子光纖貓",
+            stage: "完全體 (Mature)",
+            status: "子代活躍中",
+            traits: [50, 94, 65, 45, 98, 85],
+            stats: { focusHours: "320.0 h", circadian: "+30 (穩定心智)", steps: "450,000 步", touch: "780 次" },
+            inheritance: { rate: 80, parent: "琉璃智慧梟 (Gen 1)", text: "第 90 天由智慧梟孵化。吸收了數百小時的沉靜心流與大量補水能量，身體演化為多維量子光纖貓，能散發安撫情緒、極致專注的共感力場。", beta: "1.70×", entropy: "1.60 bit" },
+            diary: "模擬試題終於衝破了滿意分數的那天晚上，你摸著我笑了。這 90 天每一滴水、每一個番茄鐘，都轉化為我身上的光纖脈絡。你已經是一名出色的醫者了，我為你驕傲。"
+          },
+          {
+            id: "chloe_gen3",
+            candidateId: "sacred_seraph",
+            gen: 3,
+            dayUnlocked: 180,
+            name: "聖靈啟蒙者·智慧之翼",
+            title: "第三代究極體",
+            speciesId: 5,
+            avatar: "✨",
+            petImage: "assets/images/pets/sacred_seraph.png",
+            auraColor: "#06b6d4",
+            screenAura: "醫神仁心加冕 · 智慧之翼",
+            screenName: "聖靈啟蒙者",
+            stage: "傳奇 (Legend)",
+            status: "大醫仁心加冕",
+            traits: [70, 98, 70, 55, 99, 95],
+            stats: { focusHours: "620.0 h", circadian: "+40 (醫者自律)", steps: "1,050,000 步", touch: "1,450 次" },
+            inheritance: { rate: 75, parent: "量子共感精靈 (Gen 2)", text: "歷經 180 天國考衝刺與自律考驗所孕育之至高聖靈。手持醫神之杖，羽翼張開象徵知識的極致通透與守護生命的終身職志。", beta: "2.15×", entropy: "1.35 bit" },
+            diary: "第 180 天，國考通過的那一刻，你把我高高抱起。180 天前那個面對堆積如山文獻感到惶恐的女孩，如今已穿上了象徵責任的白袍。我的雙翼化為聖光，願這份智慧與專注，守護你往後的每一位病人。"
+          }
+        ]
+      },
+
+      marcus: {
+        id: "marcus",
+        name: "Marcus 的生活軌跡（自由接案設計師）",
+        role: "接案設計師 · 防坐創作型",
+        avatar: "🎨",
+        theme: "purple",
+        desc: "Remote 居家工作容易連續久坐 6 小時。PetPal 是他桌上唯一的「實體防久坐鬧鐘」，每 50 分鐘提醒他做深蹲、伸展與喝水，並在深夜靈感爆發時陪伴他創作。生活環境壓力：<strong>防久坐離座、徒手肌力、夜間靈感激發、高頻撫慰</strong>。",
+        habitLogs: generateDailyLogs('marcus'),
+        treeNodes: [
+          {
+            id: "marcus_gen1_baby",
+            gen: 1,
+            dayUnlocked: 1,
+            name: "Mochi 初始幼體",
+            title: "原型起點",
+            speciesId: 0,
+            avatar: "🐣",
+            petImage: "assets/images/pets/byte_alien.png",
+            auraColor: "#14b8a6",
+            screenAura: "白色原型光環 · 工作室守護",
+            screenName: "Mochi 幼體",
+            stage: "幼體 (Baby)",
+            status: "歷史典藏",
+            traits: [45, 50, 50, 30, 40, 55],
+            stats: { focusHours: "11.0 h", circadian: "-10 (微夜行)", steps: "22,000 步", touch: "80 次" },
+            inheritance: { rate: 100, parent: "初始硬體開箱配對生成", text: "白色初始體，準備隨 Marcus 的居家創作與健康自律展開演化。", beta: "1.00×", entropy: "2.45 bit" },
+            diary: "Marcus 的工作室裡散落著畫筆與色卡。你把我放在 32 吋大螢幕下方，笑著對我說：『小傢伙，以後每過 50 分鐘就要叫我站起來動一動喔，不然我的腰快廢了。』"
+          },
+          {
+            id: "marcus_gen1_adult",
+            candidateId: "neon_panda",
+            gen: 1,
+            dayUnlocked: 30,
+            name: "霓虹聲波熊貓",
+            title: "敏捷躍動",
+            speciesId: 2,
+            avatar: "🐼",
+            petImage: "assets/images/pets/neon_panda.png",
+            auraColor: "#ec4899",
+            screenAura: "躍動防坐聲波 · 50 分鐘提醒",
+            screenName: "聲波熊貓",
+            stage: "成年 (Adult)",
+            status: "已成年確立",
+            traits: [75, 85, 35, 40, 92, 65],
+            stats: { focusHours: "120.0 h", circadian: "-25 (靈感夜行)", steps: "240,000 步", touch: "480 次" },
+            inheritance: { rate: 82, parent: "Mochi 幼體", text: "因為 Marcus 連續 30 天嚴格遵守防久坐離座提醒，配合深蹲拉筋與夜間創作，初始幼體演化為敏捷靈動的『霓虹聲波熊貓』。眼神靈動，具備律動聲波護盾。", beta: "1.46×", entropy: "1.80 bit" },
+            diary: "深夜 01:20，你剛完成了整套品牌識別設計。當你站起來伸了一個大大的懶腰，做了 20 下深蹲時，我也跟著抖擻了一下矯健的身軀。健康的身體，才是最棒的創意畫布。"
+          },
+          {
+            id: "marcus_gen2",
+            candidateId: "cosmic_ray",
+            gen: 2,
+            dayUnlocked: 90,
+            name: "深空星海魟魚",
+            title: "第二代結晶",
+            speciesId: 4,
+            avatar: "🌊",
+            petImage: "assets/images/pets/cosmic_ray.png",
+            auraColor: "#3b82f6",
+            screenAura: "深海潮汐極光 · 天馬行空",
+            screenName: "星海魟魚",
+            stage: "完全體 (Mature)",
+            status: "子代活躍中",
+            traits: [80, 88, 40, 50, 95, 80],
+            stats: { focusHours: "290.0 h", circadian: "-20 (晝夜調和)", steps: "580,000 步", touch: "920 次" },
+            inheritance: { rate: 78, parent: "霓虹聲波熊貓 (Gen 1)", text: "第 90 天由聲波熊貓孵化。兼具深蹲拉筋的活力與自由職業天馬行空的創意，背脊浮現深海潮汐與極光微芒。", beta: "1.68×", entropy: "1.65 bit" },
+            diary: "接案的日子雖然自由，但也容易失去節奏。感謝你這 90 天從不忘記起身喝水和摸摸我。在靈感的汪洋大海裡，我和你一起游過了最壯麗的波瀾。"
+          },
+          {
+            id: "marcus_gen3",
+            candidateId: "dream_cloud",
+            gen: 3,
+            dayUnlocked: 180,
+            name: "極光好夢雲·造夢師",
+            title: "第三代究極體",
+            speciesId: 5,
+            avatar: "☁️",
+            petImage: "assets/images/pets/dream_cloud.png",
+            auraColor: "#a855f7",
+            screenAura: "流動極光光環 · 創作身心大成",
+            screenName: "極光好夢雲",
+            stage: "傳奇 (Legend)",
+            status: "健康創作大成",
+            traits: [85, 92, 50, 60, 99, 90],
+            stats: { focusHours: "540.0 h", circadian: "-15 (自在均衡)", steps: "1,250,000 步", touch: "1,600 次" },
+            inheritance: { rate: 72, parent: "深空星海魟魚 (Gen 2)", text: "自由職業連續健康自律達 180 天之究極產物。周身環繞流動極光與色彩光圈，證明居家工作者也能兼顧身心健康與頂級創作。", beta: "2.12×", entropy: "1.38 bit" },
+            diary: "半年了，螢幕前的你依然眼裡有光，而且再也沒有因為久坐而腰酸背痛。我們用自律守護了健康，用陪伴孕育了極光。這份自由，真實而有力量。"
+          }
+        ]
+      }
+    };
+
+    // --- APPLICATION STATE ---
+    let currentPersonaKey = "alex";
+    let currentDay = 30;
+    let selectedNodeId = "alex_gen1_adult";
+    let isPlaying = false;
+    let playTimer = null;
+    let radarChartInstance = null;
+
+    // --- 12 OFFICIAL PIXEL ART CHARACTERS FOR NEXT-GEN INCUBATION ENGINE ---
+    const ALL_INCUBATION_CANDIDATES = [
+      {
+        id: "cyber_raven",
+        name: "午夜賽博渡鴉",
+        title: "深度心流型",
+        desc: "極致專注 × 深研夜行",
+        image: "assets/images/pets/cyber_raven.png",
+        color: "#14a888",
+        screenAura: "冷幽心流光環 · 專注 92%",
+        screenName: "深思渡鴉",
+        weights: { vit: 0.1, foc: 0.9, circ: -0.8, soc: 0.1, cur: 0.5, clm: 0.4 }
+      },
+      {
+        id: "sprout_bear",
+        name: "深林小樹熊",
+        title: "生機治癒型",
+        desc: "萬步散步 × 定時補水",
+        image: "assets/images/pets/sprout_bear.png",
+        color: "#10b981",
+        screenAura: "治癒萌芽綠光 · 生機活力",
+        screenName: "深林樹熊",
+        weights: { vit: 0.8, foc: 0.2, circ: 0.6, soc: 0.4, cur: 0.2, clm: 0.7 }
+      },
+      {
+        id: "byte_fox",
+        name: "靈動位元狐",
+        title: "輕靈漫步型",
+        desc: "萬步探索 × 敏捷機智",
+        image: "assets/images/pets/byte_fox.png",
+        color: "#f59e0b",
+        screenAura: "流雲漫步光環 · 萬步減壓",
+        screenName: "位元狐",
+        weights: { vit: 0.9, foc: 0.3, circ: 0.4, soc: 0.5, cur: 0.6, clm: 0.3 }
+      },
+      {
+        id: "nebula_spriteling",
+        name: "星雲幻境精靈",
+        title: "破曉晨曦型",
+        desc: "清晨早起 × 澄澈心境",
+        image: "assets/images/pets/nebula_spriteling.png",
+        color: "#06b6d4",
+        screenAura: "晨露金燦光環 · 破曉出發",
+        screenName: "曦光精靈",
+        weights: { vit: 0.3, foc: 0.4, circ: 0.9, soc: 0.3, cur: 0.4, clm: 0.8 }
+      },
+      {
+        id: "neon_panda",
+        name: "霓虹聲波熊貓",
+        title: "躍動防坐型",
+        desc: "離座提醒 × 深蹲律動",
+        image: "assets/images/pets/neon_panda.png",
+        color: "#ec4899",
+        screenAura: "躍動防坐聲波 · 50分鐘提醒",
+        screenName: "聲波熊貓",
+        weights: { vit: 0.85, foc: 0.4, circ: -0.2, soc: 0.6, cur: 0.6, clm: 0.2 }
+      },
+      {
+        id: "magma_golem",
+        name: "熔岩鋼鐵巨靈",
+        title: "大地耐力型",
+        desc: "山林古道 × 恆毅力",
+        image: "assets/images/pets/magma_golem.png",
+        color: "#ef4444",
+        screenAura: "大地耐力火環 · 登山健行",
+        screenName: "熔岩巨靈",
+        weights: { vit: 0.95, foc: 0.4, circ: 0.3, soc: 0.2, cur: 0.2, clm: 0.7 }
+      },
+      {
+        id: "starlight_bot",
+        name: "星芒探險機",
+        title: "時空守護型",
+        desc: "百日自律 × 堅定定力",
+        image: "assets/images/pets/starlight_bot.png",
+        color: "#eab308",
+        screenAura: "永恆發條金芒 · 專注 98%",
+        screenName: "克羅諾斯",
+        weights: { vit: 0.4, foc: 0.95, circ: 0.3, soc: 0.3, cur: 0.7, clm: 0.6 }
+      },
+      {
+        id: "quantum_kitty",
+        name: "量子光纖貓",
+        title: "多維靈動型",
+        desc: "醫考專注 × 多維好奇",
+        image: "assets/images/pets/quantum_kitty.png",
+        color: "#8b5cf6",
+        screenAura: "量子多維靈動 · 專注 94%",
+        screenName: "量子光纖貓",
+        weights: { vit: 0.3, foc: 0.85, circ: 0.4, soc: 0.4, cur: 0.9, clm: 0.5 }
+      },
+      {
+        id: "cosmic_ray",
+        name: "深空星海魟魚",
+        title: "宏觀深潛型",
+        desc: "天馬行空 × 靈感潮汐",
+        image: "assets/images/pets/cosmic_ray.png",
+        color: "#3b82f6",
+        screenAura: "深海潮汐極光 · 宏觀思考",
+        screenName: "星海魟魚",
+        weights: { vit: 0.4, foc: 0.6, circ: -0.1, soc: 0.3, cur: 0.95, clm: 0.7 }
+      },
+      {
+        id: "dream_cloud",
+        name: "極光好夢雲",
+        title: "深度放鬆型",
+        desc: "規律好眠 × 減壓修復",
+        image: "assets/images/pets/dream_cloud.png",
+        color: "#a855f7",
+        screenAura: "流動極光光環 · 身心安眠",
+        screenName: "好夢雲",
+        weights: { vit: 0.2, foc: 0.2, circ: 0.6, soc: 0.3, cur: 0.4, clm: 0.95 }
+      },
+      {
+        id: "zen_pebble",
+        name: "禪意靜心石",
+        title: "沉著靜謐型",
+        desc: "冥想呼吸 × 心緒撫平",
+        image: "assets/images/pets/zen_pebble.png",
+        color: "#64748b",
+        screenAura: "遠峰沉靜巨石 · 平穩情緒",
+        screenName: "禪意靜心石",
+        weights: { vit: 0.3, foc: 0.6, circ: 0.5, soc: 0.2, cur: 0.3, clm: 0.95 }
+      },
+      {
+        id: "byte_alien",
+        name: "位元異星探員",
+        title: "自適極客型",
+        desc: "跨域學習 × 靈活應變",
+        image: "assets/images/pets/byte_alien.png",
+        color: "#14b8a6",
+        screenAura: "全息目鏡光環 · 專注 96%",
+        screenName: "異星探員",
+        weights: { vit: 0.5, foc: 0.7, circ: -0.3, soc: 0.4, cur: 0.9, clm: 0.3 }
+      },
+      {
+        id: "crystal_owl",
+        name: "琉璃智慧梟",
+        title: "澄澈心流型",
+        desc: "醫考專注 × 補水自律",
+        image: "assets/images/pets/crystal_owl.png",
+        color: "#14a888",
+        screenAura: "澄澈琉璃心流 · 每日 2500ml 補水",
+        screenName: "琉璃智慧梟",
+        weights: { vit: 0.4, foc: 0.92, circ: 0.7, soc: 0.3, cur: 0.8, clm: 0.75 }
+      },
+      {
+        id: "sacred_seraph",
+        name: "聖靈啟蒙者·智慧之翼",
+        title: "大師仁心型",
+        desc: "仁心治癒 × 醫神信標",
+        image: "assets/images/pets/sacred_seraph.png",
+        color: "#06b6d4",
+        screenAura: "醫神仁心加冕 · 智慧之翼",
+        screenName: "聖靈啟蒙者",
+        weights: { vit: 0.5, foc: 0.95, circ: 0.8, soc: 0.6, cur: 0.9, clm: 0.9 }
+      }
+    ];
+
+    // Pet Image Cache for smooth canvas rendering without flickering
+    const PET_IMAGE_CACHE = {};
+    function getPetImage(src) {
+      if (!src) return null;
+      if (!PET_IMAGE_CACHE[src]) {
+        const img = new Image();
+        img.src = src;
+        PET_IMAGE_CACHE[src] = img;
+      }
+      return PET_IMAGE_CACHE[src];
+    }
+    // Preload all 12 candidate images immediately
+    ALL_INCUBATION_CANDIDATES.forEach(c => getPetImage(c.image));
+
+    // Optional override when user clicks a candidate card to preview on LCD
+    let previewPetOverride = null;
+
+    // --- DOM REFERENCES ---
+    const btnUserAlex = document.getElementById('btnUserAlex');
+    const btnUserEmma = document.getElementById('btnUserEmma');
+    const btnUserJohn = document.getElementById('btnUserJohn');
+    const btnUserChloe = document.getElementById('btnUserChloe');
+    const btnUserMarcus = document.getElementById('btnUserMarcus');
+    const btnCompareMode = document.getElementById('btnCompareMode');
+    const compareModal = document.getElementById('compareModal');
+    const btnCloseCompare = document.getElementById('btnCloseCompare');
+
+    const timelineSlider = document.getElementById('timelineSlider');
+    const txtTimelineDay = document.getElementById('txtTimelineDay');
+    const txtTimelinePhase = document.getElementById('txtTimelinePhase');
+    const btnPlayPause = document.getElementById('btnPlayPause');
+    const playIcon = document.getElementById('playIcon');
+
+    const userAvatar = document.getElementById('userAvatar');
+    const userNameTitle = document.getElementById('userNameTitle');
+    const userTag = document.getElementById('userTag');
+    const userStoryDesc = document.getElementById('userStoryDesc');
+    const txtUserStreak = document.getElementById('txtUserStreak');
+
+    const gen1Container = document.getElementById('gen1Container');
+    const gen2Container = document.getElementById('gen2Container');
+    const gen3Container = document.getElementById('gen3Container');
+    const habitLog = document.getElementById('habitLog');
+
+    // Right Dashboard DOM
+    const panelPetTitle = document.getElementById('panelPetTitle');
+    const panelPetSubtitle = document.getElementById('panelPetSubtitle');
+    const panelStatusBadge = document.getElementById('panelStatusBadge');
+    const screenName = document.getElementById('screenName');
+    const screenAuraLabel = document.getElementById('screenAuraLabel');
+    const radarSumLabel = document.getElementById('radarSumLabel');
+    const statFocusHours = document.getElementById('statFocusHours');
+    const statFocusSub = document.getElementById('statFocusSub');
+    const statCircadian = document.getElementById('statCircadian');
+    const statCircadianSub = document.getElementById('statCircadianSub');
+    const statSteps = document.getElementById('statSteps');
+    const statStepsSub = document.getElementById('statStepsSub');
+    const statTouch = document.getElementById('statTouch');
+    const statTouchSub = document.getElementById('statTouchSub');
+    const provenanceInheritRate = document.getElementById('provenanceInheritRate');
+    const barInheritance = document.getElementById('barInheritance');
+    const provenanceText = document.getElementById('provenanceText');
+    const provenanceBeta = document.getElementById('provenanceBeta');
+    const provenanceEntropy = document.getElementById('provenanceEntropy');
+    const panelDiaryContent = document.getElementById('panelDiaryContent');
+    const lcdCanvas = document.getElementById('lcdCanvas');
+    const lcdCtx = lcdCanvas.getContext('2d');
+
+    // Next-Gen Incubation Prediction DOM
+    const txtIncubationSpeed = document.getElementById('txtIncubationSpeed');
+    const txtIncubationRemaining = document.getElementById('txtIncubationRemaining');
+    const barIncubationProgress = document.getElementById('barIncubationProgress');
+    const txtNextTargetMilestone = document.getElementById('txtNextTargetMilestone');
+    const incubationCandidatesGrid = document.getElementById('incubationCandidatesGrid');
+
+    // --- CONTINUOUS DAILY TRAIT VECTOR CALCULATION ---
+    function calculateDailyTraits(personaKey, day) {
+      const wobble = Math.sin(day * 0.7) * 2.5;
+      const wobble2 = Math.cos(day * 0.5) * 2.0;
+
+      if (personaKey === 'alex') {
+        const focus = Math.min(98, Math.round(50 + (day / 180) * 46 + wobble));
+        const circ = Math.max(10, Math.round(50 - (day / 180) * 38 + wobble2));
+        const vitality = Math.max(25, Math.round(45 - (day / 180) * 15 + wobble));
+        const social = Math.min(50, Math.round(30 + wobble2));
+        const curiosity = Math.min(80, Math.round(40 + (day / 180) * 35 + wobble));
+        const calm = Math.round(55 + Math.sin(day * 0.3) * 5);
+        return [vitality, focus, circ, social, curiosity, calm];
+      } else if (personaKey === 'emma') {
+        const focus = Math.min(75, Math.round(50 + (day / 180) * 20 + wobble));
+        const circ = Math.min(96, Math.round(50 + (day / 180) * 45 + wobble2));
+        const vitality = Math.min(90, Math.round(45 + (day / 180) * 42 + wobble));
+        const social = Math.min(70, Math.round(30 + (day / 180) * 35 + wobble2));
+        const curiosity = Math.min(88, Math.round(40 + (day / 180) * 45 + wobble));
+        const calm = Math.min(95, Math.round(55 + (day / 180) * 38 + wobble2));
+        return [vitality, focus, circ, social, curiosity, calm];
+      } else if (personaKey === 'john') {
+        const vitality = Math.min(98, Math.round(50 + (day / 180) * 48 + wobble));
+        const focus = Math.min(75, Math.round(50 + (day / 180) * 22 + wobble2));
+        const circ = Math.round(65 + Math.sin(day * 0.4) * 6);
+        const social = Math.min(65, Math.round(40 + (day / 180) * 22 + wobble));
+        const curiosity = Math.min(85, Math.round(45 + (day / 180) * 38 + wobble2));
+        const calm = Math.min(96, Math.round(55 + (day / 180) * 40 + wobble));
+        return [vitality, focus, circ, social, curiosity, calm];
+      } else if (personaKey === 'chloe') {
+        const vitality = Math.min(65, Math.round(40 + (day / 180) * 22 + wobble));
+        const focus = Math.min(98, Math.round(55 + (day / 180) * 42 + wobble2));
+        const circ = Math.min(85, Math.round(50 + (day / 180) * 32 + wobble));
+        const social = Math.min(55, Math.round(35 + wobble2));
+        const curiosity = Math.min(99, Math.round(55 + (day / 180) * 43 + wobble));
+        const calm = Math.min(95, Math.round(55 + (day / 180) * 38 + wobble2));
+        return [vitality, focus, circ, social, curiosity, calm];
+      } else {
+        // Marcus
+        const vitality = Math.min(85, Math.round(45 + (day / 180) * 38 + wobble));
+        const focus = Math.min(92, Math.round(50 + (day / 180) * 40 + wobble2));
+        const circ = Math.max(25, Math.round(50 - (day / 180) * 22 + wobble));
+        const social = Math.min(60, Math.round(35 + (day / 180) * 22 + wobble2));
+        const curiosity = Math.min(98, Math.round(55 + (day / 180) * 43 + wobble));
+        const calm = Math.min(90, Math.round(50 + (day / 180) * 38 + wobble2));
+        return [vitality, focus, circ, social, curiosity, calm];
+      }
+    }
+
+    // --- DYNAMIC NEXT-GEN PREDICTION & INCUBATION CALCULATION (12 CANDIDATES WITH ANCESTOR EXCLUSION) ---
+    function updateNextGenPrediction(day, traits) {
+      let prevMilestone = 1;
+      let nextMilestone = 30;
+      let targetLabel = "Gen 1 成年確立 (Day 30)";
+      let currentPhase = 1;
+
+      if (day >= 90) {
+        prevMilestone = 90;
+        nextMilestone = 180;
+        targetLabel = "Gen 3 究極繁衍 (Day 180)";
+        currentPhase = 3;
+      } else if (day >= 30) {
+        prevMilestone = 30;
+        nextMilestone = 90;
+        targetLabel = "Gen 2 結晶孵化 (Day 90)";
+        currentPhase = 2;
+      }
+
+      const beta = 1.0 + Math.log10(1.0 + day / 7.0) * 1.25;
+      txtIncubationSpeed.textContent = `自律加速：${beta.toFixed(2)}×`;
+
+      const phaseSpan = Math.max(1, nextMilestone - prevMilestone);
+      const rawProgress = Math.min(100, Math.max(0, Math.round(((day - prevMilestone) / phaseSpan) * 100)));
+      barIncubationProgress.style.width = `${rawProgress}%`;
+
+      const nominalDaysLeft = Math.max(0, nextMilestone - day);
+      const acceleratedDaysLeft = Math.ceil(nominalDaysLeft / Math.min(2.0, beta * 0.9));
+
+      // 1. Check which candidates have ALREADY been evolved/unlocked in the family tree up to currentDay
+      const persona = PERSONAS[currentPersonaKey];
+      const unlockedAncestors = persona.treeNodes.filter(n => day >= n.dayUnlocked && n.candidateId);
+      const excludedCandidateIds = new Set(unlockedAncestors.map(n => n.candidateId));
+
+      if (day >= 180) {
+        txtNextTargetMilestone.textContent = "家族傳承：已達成 3 代究極繁衍";
+        txtIncubationRemaining.textContent = "3 代家族族譜完整確立 · 歷代親代已永久入冊 (100%)";
+      } else {
+        const nextGenName = currentPhase === 1 ? "第 1 代成年體" : (currentPhase === 2 ? "第 2 代子代" : "第 3 代究極體");
+        const excludedNote = excludedCandidateIds.size > 0 ? ` · 親代已排除 (${excludedCandidateIds.size} 種)` : '';
+        txtNextTargetMilestone.textContent = `下一階段閾值: ${targetLabel}`;
+        txtIncubationRemaining.textContent = `預計約 ${acceleratedDaysLeft} 天孵化 (${nextGenName} 進度 ${rawProgress}%)${excludedNote}`;
+      }
+
+      // 2. Canonical Target lineage mapping for each persona to guarantee highest probability evolves next gen
+      const targetLineage = {
+        alex: ['cyber_raven', 'byte_alien', 'starlight_bot'],
+        emma: ['nebula_spriteling', 'sprout_bear', 'zen_pebble'],
+        john: ['byte_fox', 'magma_golem', 'zen_pebble'],
+        chloe: ['crystal_owl', 'quantum_kitty', 'sacred_seraph'],
+        marcus: ['neon_panda', 'cosmic_ray', 'dream_cloud']
+      };
+
+      const personaTargets = targetLineage[currentPersonaKey] || ['cyber_raven', 'byte_alien', 'starlight_bot'];
+      const activeStageTarget = personaTargets[Math.min(currentPhase - 1, 2)];
+
+      // 3. Compute affinity score for each candidate (Excluded candidates get score -9999 -> prob 0%)
+      const scoredCandidates = ALL_INCUBATION_CANDIDATES.map(cand => {
+        const cid = cand.id;
+        const alreadyInTree = excludedCandidateIds.has(cid);
+
+        if (alreadyInTree) {
+          return { ...cand, rawScore: -9999, alreadyInTree: true };
+        }
+
+        // Base affinity score
+        let score = 1.0;
+        if (cid === activeStageTarget && day < 180) {
+          score += 1.45; // Highest probability for current stage target
+        } else if (personaTargets.includes(cid)) {
+          score += 0.55; // Secondary affinity for future generation
+        } else {
+          score += 0.25 + (Math.sin(day * 0.15 + (cid.charCodeAt(0) % 10)) * 0.12);
+        }
+
+        return { ...cand, rawScore: score, alreadyInTree: false };
+      });
+
+      // 4. Softmax probability calculation: ONLY over non-excluded candidates
+      const competingCandidates = scoredCandidates.filter(c => !c.alreadyInTree);
+      let candidatesWithProb = [];
+
+      if (competingCandidates.length > 0 && day < 180) {
+        const maxScore = Math.max(...competingCandidates.map(c => c.rawScore));
+        const temp = 0.42;
+        const expScores = competingCandidates.map(c => Math.exp((c.rawScore - maxScore) / temp));
+        const sumExp = expScores.reduce((a, b) => a + b, 0);
+
+        competingCandidates.forEach((c, i) => {
+          c.prob = Math.max(1, Math.round((expScores[i] / sumExp) * 100));
+        });
+
+        // Normalize sum of competing to exactly 100%
+        const currentSum = competingCandidates.reduce((sum, c) => sum + c.prob, 0);
+        const topCandidate = competingCandidates.reduce((maxC, c) => c.prob > maxC.prob ? c : maxC, competingCandidates[0]);
+        topCandidate.prob += (100 - currentSum);
+
+        // Excluded candidates have strictly 0%
+        scoredCandidates.forEach(c => {
+          if (c.alreadyInTree) c.prob = 0;
+        });
+
+        candidatesWithProb = [...scoredCandidates];
+      } else {
+        // If all 3 generations achieved (day >= 180), all in-tree are 0%
+        candidatesWithProb = scoredCandidates.map(c => ({ ...c, prob: 0 }));
+      }
+
+      // Sort: Active competing first (by prob desc), already-in-tree candidates last (prob 0%)
+      candidatesWithProb.sort((a, b) => {
+        if (a.alreadyInTree !== b.alreadyInTree) return a.alreadyInTree ? 1 : -1;
+        return b.prob - a.prob;
+      });
+
+      // 5. Render candidate cards into incubationCandidatesGrid
+      if (incubationCandidatesGrid) {
+        const targetNextGenDay = currentPhase === 1 ? 30 : (currentPhase === 2 ? 90 : 180);
+
+        incubationCandidatesGrid.innerHTML = candidatesWithProb.map((c, idx) => {
+          const isTop = (!c.alreadyInTree && idx === 0 && day < 180);
+          const isPreviewing = previewPetOverride && previewPetOverride.id === c.id;
+
+          if (c.alreadyInTree) {
+            // Already appeared in family tree -> Probability is 0%
+            return `
+              <div onclick="previewCandidate('${c.id}')"
+                   title="此生命體已演化並加入族譜，後續世代孵化機率降為 0%"
+                   class="p-2 rounded-xl border transition-all duration-200 cursor-pointer flex flex-col justify-between bg-zen-surface/75 border-zen-borderLight opacity-65 hover:opacity-90">
+                <div class="flex items-center justify-between gap-1.5 mb-1.5">
+                  <div class="flex items-center gap-1.5 min-w-0">
+                    <img src="${c.image}" alt="${c.name}" class="w-6 h-6 rounded-full object-contain bg-white border border-zen-border shrink-0 grayscale-[35%]" />
+                    <div class="truncate">
+                      <div class="text-[11px] font-semibold text-zen-muted leading-tight flex items-center gap-1 truncate">
+                        <span class="truncate">${c.name}</span>
+                        <span class="shrink-0 text-[8px] px-1.5 py-0.2 rounded bg-zen-border text-zen-pine font-medium">✓ 已在族譜</span>
+                      </div>
+                      <div class="text-[9px] text-zen-muted leading-none mt-0.5 truncate">${c.title} · 親代去重</div>
+                    </div>
+                  </div>
+                  <div class="text-right shrink-0">
+                    <span class="font-mono text-xs font-bold text-zen-muted">0%</span>
+                  </div>
+                </div>
+                <div class="w-full bg-zen-borderLight h-1.5 rounded-full overflow-hidden">
+                  <div class="h-full rounded-full bg-zen-muted" style="width: 0%;"></div>
+                </div>
+              </div>
+            `;
+          }
+
+          // Active competing candidate
+          return `
+            <div onclick="previewCandidate('${c.id}')"
+                 class="p-2 rounded-xl border transition-all duration-200 cursor-pointer flex flex-col justify-between ${
+                   isPreviewing
+                     ? 'bg-brand-50/90 border-2 border-brand-500 shadow-sm ring-2 ring-brand-500/20'
+                     : 'bg-white border-zen-border hover:border-brand-400 hover:shadow-xs'
+                 }">
+              <div class="flex items-center justify-between gap-1.5 mb-1.5">
+                <div class="flex items-center gap-1.5 min-w-0">
+                  <img src="${c.image}" alt="${c.name}" class="w-6 h-6 rounded-full object-contain bg-zen-surface border border-zen-border shrink-0" />
+                  <div class="truncate">
+                    <div class="text-[11px] font-bold text-zen-pine leading-tight flex items-center gap-1 truncate">
+                      <span class="truncate">${c.name}</span>
+                      ${isTop ? `<span class="shrink-0 text-[8px] px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 font-bold border border-amber-300 animate-pulse">★ 領先 (將於 Day ${targetNextGenDay} 孵化)</span>` : ''}
+                    </div>
+                    <div class="text-[9px] text-zen-muted leading-none mt-0.5 truncate">${c.title} · ${c.desc}</div>
+                  </div>
+                </div>
+                <div class="text-right shrink-0">
+                  <span class="font-mono text-xs font-bold ${isTop ? 'text-brand-700' : 'text-zen-pine'}">${c.prob}%</span>
+                </div>
+              </div>
+
+              <!-- Mini Progress Bar -->
+              <div class="w-full bg-zen-borderLight h-1.5 rounded-full overflow-hidden">
+                <div class="h-full rounded-full transition-all duration-300" style="width: ${c.prob}%; background-color: ${c.color};"></div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    // Preview candidate on 1.28" LCD screen simulator
+    function previewCandidate(candId) {
+      const cand = ALL_INCUBATION_CANDIDATES.find(c => c.id === candId);
+      if (!cand) return;
+
+      previewPetOverride = cand;
+      screenName.textContent = cand.screenName || cand.name.split(' ')[0];
+      screenAuraLabel.textContent = `[預覽孵化] ${cand.screenAura || cand.title}`;
+      panelPetTitle.textContent = `${cand.name} (預覽)`;
+      panelPetSubtitle.textContent = `候選生命體 · ${cand.title} · ${cand.desc}`;
+      panelStatusBadge.textContent = "候選預測態";
+
+      // Refresh candidate cards styling
+      const currentTraits = calculateDailyTraits(currentPersonaKey, currentDay);
+      updateNextGenPrediction(currentDay, currentTraits);
+    }
+
+    // --- RADAR CHART SETUP (GREEN & WHITE ZEN THEME) ---
+    function initRadarChart() {
+      const ctx = document.getElementById('petRadarChart').getContext('2d');
+      radarChartInstance = new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: ['活力', '專注', '作息', '社交', '好奇', '沉靜'],
+          datasets: [{
+            label: '特質向量',
+            data: [30, 92, 15, 20, 65, 55],
+            backgroundColor: 'rgba(20, 168, 136, 0.22)',
+            borderColor: '#14a888',
+            borderWidth: 2.5,
+            pointBackgroundColor: '#0f856c',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 1.5,
+            pointRadius: 4,
+            pointHoverRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: {
+            duration: 150
+          },
+          scales: {
+            r: {
+              min: 0,
+              max: 100,
+              ticks: { display: false, stepSize: 25 },
+              grid: { color: '#e2dbcd', lineWidth: 1 },
+              angleLines: { color: '#ece6dc', lineWidth: 1 },
+              pointLabels: {
+                color: '#16302c',
+                font: { family: 'Plus Jakarta Sans', size: 11, weight: '700' }
+              }
+            }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+    }
+
+    // --- RENDER LCD CANVAS (DISPLAY REAL PIXEL ART CHARACTER ACCORDING TO SELECTION) ---
+    let animFrame = 0;
+    function renderLcdLoop() {
+      animFrame += 0.04;
+      const t = animFrame;
+      const cx = 120;
+      const cy = 120;
+      lcdCtx.clearRect(0, 0, 240, 240);
+
+      // Active node is either candidate preview override or selected family tree node
+      const activeObj = previewPetOverride || getCurrentSelectedNode();
+      if (!activeObj) {
+        requestAnimationFrame(renderLcdLoop);
+        return;
+      }
+
+      const imgSrc = activeObj.petImage || activeObj.image || "assets/images/pets/sprout_bear.png";
+      const imgObj = getPetImage(imgSrc);
+      const themeColor = activeObj.auraColor || activeObj.color || "#14a888";
+
+      // 1. Dynamic Energy Aura & Radial Glow
+      const pulseR = 96 + Math.sin(t * 2) * 5;
+      const auraGrad = lcdCtx.createRadialGradient(cx, cy, 25, cx, cy, pulseR);
+      auraGrad.addColorStop(0, 'rgba(255, 255, 255, 0.2)');
+      auraGrad.addColorStop(0.65, themeColor + '28');
+      auraGrad.addColorStop(1, 'transparent');
+      lcdCtx.fillStyle = auraGrad;
+      lcdCtx.beginPath();
+      lcdCtx.arc(cx, cy, pulseR, 0, Math.PI * 2);
+      lcdCtx.fill();
+
+      // Rotating Aura Orbit Ellipse
+      lcdCtx.strokeStyle = themeColor + '40';
+      lcdCtx.lineWidth = 2;
+      lcdCtx.beginPath();
+      lcdCtx.ellipse(cx, cy + 10, 88, 32, Math.sin(t * 0.7) * 0.25, 0, Math.PI * 2);
+      lcdCtx.stroke();
+
+      // 2. Floating Breathing Character Animation
+      const floatY = Math.sin(t * 1.8) * 4.5;
+
+      // Soft Floating Ground Shadow
+      const shadowY = cy + 62;
+      const shadowW = Math.max(22, 45 - floatY * 1.5);
+      const shadowH = Math.max(5, 9 - floatY * 0.5);
+      lcdCtx.fillStyle = 'rgba(22, 48, 44, 0.12)';
+      lcdCtx.beginPath();
+      lcdCtx.ellipse(cx, shadowY, shadowW, shadowH, 0, 0, Math.PI * 2);
+      lcdCtx.fill();
+
+      // Draw Pixel Art Pet Avatar Image
+      if (imgObj && imgObj.complete && imgObj.naturalWidth > 0) {
+        const drawSize = 145;
+        const scale = 1.0 + Math.cos(t * 1.8) * 0.018; // Subtle breathing bounce
+
+        lcdCtx.save();
+        lcdCtx.imageSmoothingEnabled = true;
+        lcdCtx.imageSmoothingQuality = 'high';
+        lcdCtx.translate(cx, cy + floatY);
+        lcdCtx.scale(scale, scale);
+        lcdCtx.drawImage(imgObj, -drawSize / 2, -drawSize / 2, drawSize, drawSize);
+        lcdCtx.restore();
+      } else {
+        // Fallback placeholder while image loads
+        lcdCtx.fillStyle = '#f0fdf9';
+        lcdCtx.strokeStyle = themeColor;
+        lcdCtx.lineWidth = 3;
+        lcdCtx.beginPath();
+        lcdCtx.ellipse(cx, cy + floatY, 46, 44, 0, 0, Math.PI * 2);
+        lcdCtx.fill();
+        lcdCtx.stroke();
+      }
+
+      // 3. Subtle LCD Circular Glass Horizon Reflection
+      lcdCtx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+      lcdCtx.lineWidth = 2;
+      lcdCtx.beginPath();
+      lcdCtx.arc(cx, cy, 114, -Math.PI * 0.8, -Math.PI * 0.2);
+      lcdCtx.stroke();
+
+      requestAnimationFrame(renderLcdLoop);
+    }
+
+    function getCurrentSelectedNode() {
+      const persona = PERSONAS[currentPersonaKey];
+      return persona.treeNodes.find(n => n.id === selectedNodeId) || persona.treeNodes[0];
+    }
+
+    // --- RENDER FAMILY TREE UI ---
+    function renderFamilyTree() {
+      const persona = PERSONAS[currentPersonaKey];
+
+      // Update Persona Banner
+      userNameTitle.textContent = persona.name;
+      userTag.textContent = persona.role;
+      userAvatar.textContent = persona.avatar;
+      userStoryDesc.innerHTML = persona.desc;
+      txtUserStreak.textContent = `連續自律：${Math.min(currentDay, 180)} 天`;
+
+      // Clear containers
+      gen1Container.innerHTML = '';
+      gen2Container.innerHTML = '';
+      gen3Container.innerHTML = '';
+
+      persona.treeNodes.forEach(node => {
+        const isUnlocked = currentDay >= node.dayUnlocked;
+        const isSelected = isUnlocked && (node.id === selectedNodeId) && !previewPetOverride;
+
+        const card = document.createElement('div');
+        card.className = `p-4 rounded-2xl transition-all duration-200 cursor-pointer flex flex-col justify-between w-56 sm:w-64 border shadow-sm ${
+          isSelected
+            ? 'bg-brand-50/90 border-2 border-brand-500 shadow-md ring-2 ring-brand-500/20 scale-[1.02]'
+            : (isUnlocked
+                ? 'bg-white border-zen-border hover:border-brand-400 hover:shadow-md'
+                : 'bg-zen-surface/60 border-zen-borderLight opacity-50 cursor-not-allowed')
+        }`;
+
+        const petThumbHtml = node.petImage
+          ? `<img src="${node.petImage}" alt="${node.name}" class="w-8 h-8 rounded-full object-contain bg-zen-surface border border-zen-border" />`
+          : `<span class="text-2xl">${node.avatar}</span>`;
+
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-1.5">
+                ${isUnlocked ? petThumbHtml : '<span class="text-2xl">🔒</span>'}
+              </div>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded-full font-semibold ${
+                isUnlocked ? (isSelected ? 'bg-brand-500 text-white font-bold' : 'bg-brand-50 text-brand-700 border border-brand-200') : 'bg-zen-border text-zen-muted'
+              }">
+                ${isUnlocked ? (isSelected ? '● 螢幕顯示中' : '解鎖可用') : `需 Day ${node.dayUnlocked}`}
+              </span>
+            </div>
+            <h4 class="font-bold text-sm ${isUnlocked ? 'text-zen-pine' : 'text-zen-muted'}">${node.name}</h4>
+            <div class="text-[11px] text-brand-700 font-medium mb-1.5">${node.title}</div>
+            <p class="text-[11px] text-zen-muted leading-tight line-clamp-2">${node.stage} · ${node.status}</p>
+          </div>
+          <div class="mt-3 pt-2 border-t border-zen-borderLight flex items-center justify-between text-[10px] font-mono text-zen-muted">
+            <span>解鎖門檻: Day ${node.dayUnlocked}</span>
+            <span class="${isSelected ? 'text-brand-700 font-bold' : ''}">${isUnlocked ? (isSelected ? '顯示中' : '切換螢幕 →') : '未解鎖'}</span>
+          </div>
+        `;
+
+        card.addEventListener('click', () => {
+          if (isUnlocked) {
+            previewPetOverride = null; // Clear candidate preview
+            selectedNodeId = node.id;
+            renderFamilyTree();
+            updateDashboard(node);
+          }
+        });
+
+        if (node.gen === 1) gen1Container.appendChild(card);
+        else if (node.gen === 2) gen2Container.appendChild(card);
+        else if (node.gen === 3) gen3Container.appendChild(card);
+      });
+
+      // Update Habit Log Stream
+      updateHabitStream();
+
+      // Ensure Dashboard is showing the currently selected node
+      const activeNode = getCurrentSelectedNode();
+      updateDashboard(activeNode);
+    }
+
+    // --- UPDATE HABIT LOG STREAM (REALTIME TICKER) ---
+    function updateHabitStream() {
+      const persona = PERSONAS[currentPersonaKey];
+      habitLog.innerHTML = '';
+      
+      const startIdx = Math.max(0, currentDay - 10);
+      const visibleLogs = persona.habitLogs.slice(startIdx, currentDay);
+
+      if (visibleLogs.length === 0) {
+        habitLog.innerHTML = `<div class="text-zen-muted">// 系統已啟動，等待第 1 天生活習慣數據注入...</div>`;
+      } else {
+        const tagStyles = {
+          cyan: "bg-sky-50 text-sky-800 border-sky-200",
+          emerald: "bg-emerald-50 text-emerald-800 border-emerald-200",
+          amber: "bg-amber-50 text-amber-800 border-amber-200",
+          purple: "bg-purple-50 text-purple-800 border-purple-200",
+          teal: "bg-teal-50 text-teal-800 border-teal-200",
+          indigo: "bg-indigo-50 text-indigo-800 border-indigo-200",
+          rose: "bg-rose-50 text-rose-800 border-rose-200"
+        };
+
+        visibleLogs.forEach((l) => {
+          const isToday = l.day === currentDay;
+          const card = document.createElement('div');
+          
+          card.className = `p-3 rounded-xl border transition-all duration-200 ${
+            isToday
+              ? 'bg-white border-2 border-brand-500 shadow-md ring-2 ring-brand-500/15'
+              : 'bg-white/90 border-zen-border hover:border-brand-300 shadow-xs'
+          }`;
+
+          const habitsHtml = (l.habits || []).map(h => {
+            const style = tagStyles[h.tag] || "bg-zen-surface text-zen-body border-zen-border";
+            return `
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg border text-[11px] font-mono ${style}">
+                <span>${h.icon}</span>
+                <span class="font-medium">${h.label}</span>
+                <span class="font-bold">${h.val}</span>
+              </span>
+            `;
+          }).join('');
+
+          const badgeHtml = l.specialBadge
+            ? `<span class="text-[10px] font-mono text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200 font-bold">${l.specialBadge}</span>`
+            : (isToday
+                ? `<span class="inline-flex items-center gap-1 text-[10px] font-mono text-brand-700 bg-brand-50 px-2.5 py-0.5 rounded-full border border-brand-200 font-semibold"><span class="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse"></span>今日打卡已同步</span>`
+                : `<span class="text-[10px] font-mono text-zen-muted">已入晶片儲存</span>`
+              );
+
+          card.innerHTML = `
+            <div class="flex items-center justify-between gap-2 mb-1.5">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded-md font-mono text-[11px] font-bold ${
+                  isToday ? 'bg-brand-500 text-white' : 'bg-zen-surface text-zen-pine border border-zen-border'
+                }">Day ${l.day} (${l.weekday})</span>
+                <span class="text-xs font-semibold text-zen-pine">${l.headline || '日常自律養成'}</span>
+              </div>
+              <div>${badgeHtml}</div>
+            </div>
+            <div class="flex flex-wrap gap-1.5 mb-2">
+              ${habitsHtml}
+            </div>
+            <div class="pt-1.5 border-t border-zen-borderLight flex items-center justify-between text-[10px] font-mono text-zen-muted">
+              <span>📊 傳感器量測：${l.healthMetrics || '健康數據穩定'}</span>
+              <span class="text-brand-700 font-semibold">🧬 基因向量累積 +${(0.2 + (l.day % 5) * 0.15).toFixed(2)}</span>
+            </div>
+          `;
+          habitLog.appendChild(card);
+        });
+
+        habitLog.scrollTop = habitLog.scrollHeight;
+      }
+    }
+
+    // --- UPDATE RIGHT DASHBOARD WITH CONTINUOUS DAILY TELEMETRY ---
+    function updateDashboard(node) {
+      if (!node) return;
+
+      panelPetTitle.textContent = node.name;
+      panelPetSubtitle.textContent = `Generation ${node.gen} · ${node.stage} · ${node.title}`;
+      panelStatusBadge.textContent = node.status;
+      screenName.textContent = node.screenName || node.name.split(' ')[0];
+      screenAuraLabel.textContent = node.screenAura || node.title;
+
+      const currentTraits = calculateDailyTraits(currentPersonaKey, currentDay);
+
+      // Persona-specific interpolated sensor metrics
+      if (currentPersonaKey === 'alex') {
+        const hours = (currentDay * 3.2).toFixed(1);
+        statFocusHours.textContent = `${hours} 小時`;
+        statFocusSub.textContent = `無中斷完成率 94.2%`;
+        statCircadian.textContent = `-42 (深研夜貓)`;
+        statCircadianSub.textContent = `平均就寢 02:40 AM`;
+        statSteps.textContent = `${Math.round(currentDay * 6080).toLocaleString()} 步`;
+        statStepsSub.textContent = `日均 6,080 步 (久坐偏多)`;
+        statTouch.textContent = `${Math.round(currentDay * 11.4)} 次`;
+        statTouchSub.textContent = `防久坐離座摸摸 120 次`;
+      } else if (currentPersonaKey === 'emma') {
+        const hours = (currentDay * 1.5).toFixed(1);
+        statFocusHours.textContent = `${hours} 小時`;
+        statFocusSub.textContent = `晨讀完成率 98.5%`;
+        statCircadian.textContent = `+48 (極致晨曦)`;
+        statCircadianSub.textContent = `平均晨起 06:15 AM`;
+        statSteps.textContent = `${Math.round(currentDay * 10300).toLocaleString()} 步`;
+        statStepsSub.textContent = `日均 10,300 步 (晨跑活力)`;
+        statTouch.textContent = `${Math.round(currentDay * 14.0)} 次`;
+        statTouchSub.textContent = `伴睡夜燈打卡 90 次`;
+      } else if (currentPersonaKey === 'john') {
+        const hours = (currentDay * 2.0).toFixed(1);
+        statFocusHours.textContent = `${hours} 小時`;
+        statFocusSub.textContent = `高壓會議專注率 95%`;
+        statCircadian.textContent = `+15 (活力均衡)`;
+        statCircadianSub.textContent = `平均就寢 23:00 PM`;
+        statSteps.textContent = `${Math.round(currentDay * 12200).toLocaleString()} 步`;
+        statStepsSub.textContent = `日均 12,200 步 (萬步減壓)`;
+        statTouch.textContent = `${Math.round(currentDay * 17.5)} 次`;
+        statTouchSub.textContent = `離座摸摸減壓 480 次`;
+      } else if (currentPersonaKey === 'chloe') {
+        const hours = (currentDay * 3.4).toFixed(1);
+        statFocusHours.textContent = `${hours} 小時`;
+        statFocusSub.textContent = `國考專注完成率 98%`;
+        statCircadian.textContent = `+20 (嚴謹作息)`;
+        statCircadianSub.textContent = `平均就寢 23:15 PM`;
+        statSteps.textContent = `${Math.round(currentDay * 6500).toLocaleString()} 步`;
+        statStepsSub.textContent = `日均 6,500 步 (規律自習)`;
+        statTouch.textContent = `${Math.round(currentDay * 12.0)} 次`;
+        statTouchSub.textContent = `護眼閉目打卡 240 次`;
+      } else {
+        const hours = (currentDay * 3.0).toFixed(1);
+        statFocusHours.textContent = `${hours} 小時`;
+        statFocusSub.textContent = `UI 創作專注率 96%`;
+        statCircadian.textContent = `-25 (靈感夜行)`;
+        statCircadianSub.textContent = `平均就寢 01:30 AM`;
+        statSteps.textContent = `${Math.round(currentDay * 7800).toLocaleString()} 步`;
+        statStepsSub.textContent = `日均 7,800 步 (深蹲拉筋)`;
+        statTouch.textContent = `${Math.round(currentDay * 16.0)} 次`;
+        statTouchSub.textContent = `防久坐離座撫摸 520 次`;
+      }
+
+      // Update Genetic Provenance
+      if (node.inheritance) {
+        provenanceInheritRate.textContent = `${node.inheritance.rate}% 傳承自親代 (${node.inheritance.parent})`;
+        barInheritance.style.width = `${node.inheritance.rate}%`;
+        provenanceText.textContent = node.inheritance.text;
+        provenanceBeta.textContent = node.inheritance.beta;
+        provenanceEntropy.textContent = node.inheritance.entropy;
+      }
+
+      // Update Soul Diary
+      panelDiaryContent.textContent = `"${node.diary || '陪伴你的每一個日子，都是靈魂最美的風景。'}"`;
+
+      // Update Radar Chart smoothly
+      if (radarChartInstance) {
+        radarChartInstance.data.datasets[0].data = currentTraits;
+        radarChartInstance.update();
+      }
+
+      radarSumLabel.textContent = `專注 ${currentTraits[1]}% · 活力 ${currentTraits[0]}% · 作息 ${currentTraits[2]}%`;
+
+      // Update Next-Gen Incubation Prediction
+      updateNextGenPrediction(currentDay, currentTraits);
+    }
+
+    // --- TIMELINE CONTROLLER LOGIC ---
+    function setTimelineDay(day) {
+      currentDay = parseInt(day);
+      previewPetOverride = null;
+      timelineSlider.value = currentDay;
+      txtTimelineDay.textContent = `第 ${currentDay} 天`;
+
+      let phase = "Phase 1: 原型幼體";
+      if (currentDay >= 180) phase = "Phase 4: 第 3 代究極繁衍 (自律滿 180 天)";
+      else if (currentDay >= 90) phase = "Phase 3: 第 2 代結晶孵化 (自律 90 天)";
+      else if (currentDay >= 30) phase = "Phase 2: 第 1 代成年定型 (自律 30 天)";
+      txtTimelinePhase.textContent = phase;
+
+      // Auto select appropriate generation node based on day
+      const persona = PERSONAS[currentPersonaKey];
+      if (currentDay >= 180) selectedNodeId = persona.treeNodes[3].id;
+      else if (currentDay >= 90) selectedNodeId = persona.treeNodes[2].id;
+      else if (currentDay >= 30) selectedNodeId = persona.treeNodes[1].id;
+      else selectedNodeId = persona.treeNodes[0].id;
+
+      renderFamilyTree();
+    }
+
+    function togglePlay() {
+      if (isPlaying) {
+        pausePlay();
+      } else {
+        startPlay();
+      }
+    }
+
+    function startPlay() {
+      isPlaying = true;
+      playIcon.textContent = '⏸';
+      btnPlayPause.classList.replace('bg-brand-500', 'bg-amber-500');
+      btnPlayPause.classList.replace('hover:bg-brand-600', 'hover:bg-amber-600');
+
+      playTimer = setInterval(() => {
+        let nextDay = currentDay + 1;
+        if (nextDay > 180) nextDay = 1;
+        setTimelineDay(nextDay);
+      }, 180);
+    }
+
+    function pausePlay() {
+      isPlaying = false;
+      playIcon.textContent = '▶';
+      btnPlayPause.classList.replace('bg-amber-500', 'bg-brand-500');
+      btnPlayPause.classList.replace('hover:bg-amber-600', 'hover:bg-brand-600');
+      clearInterval(playTimer);
+    }
+
+    // --- SWITCH PERSONAS ---
+    function switchPersona(key) {
+      currentPersonaKey = key;
+      const persona = PERSONAS[key];
+
+      // Update Active Tab styles
+      const tabs = [
+        { btn: btnUserAlex, key: 'alex' },
+        { btn: btnUserEmma, key: 'emma' },
+        { btn: btnUserJohn, key: 'john' },
+        { btn: btnUserChloe, key: 'chloe' },
+        { btn: btnUserMarcus, key: 'marcus' }
+      ];
+
+      tabs.forEach(t => {
+        if (t.key === key) {
+          t.btn.className = 'user-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2.5 bg-white text-brand-700 border-2 border-brand-500 shadow-sm ring-2 ring-brand-500/15';
+        } else {
+          t.btn.className = 'user-tab-btn px-4 py-2 rounded-xl text-xs font-semibold text-zen-body hover:text-zen-pine hover:bg-white/80 transition-all flex items-center gap-2.5 bg-white/60 border border-zen-border';
+        }
+      });
+
+      // Default to Adult node if currentDay >= 30
+      if (currentDay >= 180) selectedNodeId = persona.treeNodes[3].id;
+      else if (currentDay >= 90) selectedNodeId = persona.treeNodes[2].id;
+      else if (currentDay >= 30) selectedNodeId = persona.treeNodes[1].id;
+      else selectedNodeId = persona.treeNodes[0].id;
+
+      renderFamilyTree();
+    }
+
+    // --- EVENT LISTENERS ---
+    btnUserAlex.addEventListener('click', () => switchPersona('alex'));
+    btnUserEmma.addEventListener('click', () => switchPersona('emma'));
+    btnUserJohn.addEventListener('click', () => switchPersona('john'));
+    btnUserChloe.addEventListener('click', () => switchPersona('chloe'));
+    btnUserMarcus.addEventListener('click', () => switchPersona('marcus'));
+
+    btnCompareMode.addEventListener('click', () => {
+      compareModal.classList.remove('hidden');
+    });
+
+    btnCloseCompare.addEventListener('click', () => {
+      compareModal.classList.add('hidden');
+    });
+
+    compareModal.addEventListener('click', (e) => {
+      if (e.target === compareModal) compareModal.classList.add('hidden');
+    });
+
+    timelineSlider.addEventListener('input', (e) => {
+      pausePlay();
+      setTimelineDay(e.target.value);
+    });
+
+    btnPlayPause.addEventListener('click', togglePlay);
+
+    document.querySelectorAll('.jump-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        pausePlay();
+        setTimelineDay(btn.getAttribute('data-day'));
+      });
+    });
+
+    // --- INITIALIZATION ---
+    window.addEventListener('DOMContentLoaded', () => {
+      initRadarChart();
+      renderLcdLoop();
+      setTimelineDay(30);
+    });
+
+  </script>
+</body>
+</html>
